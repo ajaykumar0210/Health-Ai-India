@@ -1,0 +1,36 @@
+.page { max-width: 1000px; }
+.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.title { font-size: 24px; font-weight: 700; color: #202124; margin: 0; }
+.tabs { display: flex; gap: 8px; }
+.tab { padding: 8px 20px; border-radius: 20px; border: 1.5px solid #DADCE0; background: white; font-size: 13px; cursor: pointer; color: #5F6368; font-weight: 500; }
+.activeTab { background: #0D47A1; color: white; border-color: #0D47A1; }
+
+.kpiRow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+
+.kpiCard { background: white; border-radius: 14px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+.kpiLabel { font-size: 13px; color: #5F6368; margin-bottom: 6px; }
+.kpiValue { font-size: 28px; font-weight: 700; color: #202124; }
+.kpiGrowth { font-size: 12px; color: #34A853; margin-top: 4px; font-weight: 600; }
+
+.card { background: white; border-radius: 14px; padding: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+.cardTitle { font-size: 16px; font-weight: 700; color: #202124; margin: 0 0 24px; }
+
+.chart { display: flex; align-items: flex-end; gap: 20px; padding: 20px 0 0; height: 260px; }
+.bar { display: flex; flex-direction: column; align-items: center; gap: 8px; flex: 1; }
+.barValue { font-size: 12px; font-weight: 600; color: #202124; }
+.barFill { width: 100%; background: linear-gradient(180deg, #1A73E8, #0D47A1); border-radius: 6px 6px 0 0; min-height: 8px; }
+.barLabel { font-size: 12px; color: #5F6368; font-weight: 600; }
+
+.planTable { width: 100%; border-collapse: collapse; }
+.planTable th { padding: 12px 16px; background: #F8F9FA; text-align: left; font-size: 12px; font-weight: 700; color: #5F6368; text-transform: uppercase; }
+.planTable td { padding: 14px 16px; border-top: 1px solid #F1F3F4; font-size: 14px; color: #202124; }
+.planRow:hover { background: #F8F9FA; }
+
+.planName { font-weight: 600; }
+.revenue { font-weight: 600; color: #34A853; }
+
+.pctBar { display: flex; align-items: center; gap: 8px; }
+.pctFill { height: 6px; background: #1A73E8; border-radius: 3px; min-width: 4px; }
+.pctBar span { font-size: 12px; color: #5F6368; white-space: nowrap; }
+
+.trend { color: #34A853; font-weight: 600; font-size: 13px; }

@@ -1,0 +1,51 @@
+.page { max-width: 900px; }
+.header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+.title { font-size: 24px; font-weight: 700; color: #202124; margin: 0 0 4px; }
+.sub { font-size: 13px; color: #E65100; margin: 0; font-weight: 600; }
+
+.filters { display: flex; gap: 8px; margin-bottom: 20px; }
+.filterBtn { padding: 8px 18px; border-radius: 20px; border: 1.5px solid #DADCE0; background: white; font-size: 13px; cursor: pointer; color: #5F6368; display: flex; align-items: center; gap: 6px; }
+.filterBtn:hover { border-color: #0D47A1; }
+.activeFilter { background: #0D47A1; color: white; border-color: #0D47A1; }
+.filterCount { background: rgba(255,255,255,0.3); padding: 1px 7px; border-radius: 10px; font-size: 11px; font-weight: 700; }
+.activeFilter .filterCount { background: rgba(255,255,255,0.3); }
+
+.list { display: flex; flex-direction: column; gap: 14px; }
+
+.refundCard {
+  background: white;
+  border-radius: 14px;
+  padding: 20px 24px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.refundLeft { display: flex; gap: 14px; flex: 1; }
+
+.avatar { width: 42px; height: 42px; border-radius: 50%; background: #E8F0FE; color: #0D47A1; font-weight: 700; font-size: 18px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+
+.userName { font-size: 16px; font-weight: 600; color: #202124; margin-bottom: 4px; }
+.meta { font-size: 12px; color: #9AA0A6; margin-bottom: 6px; }
+.reason { font-size: 13px; color: #5F6368; font-style: italic; background: #F8F9FA; padding: 8px 12px; border-radius: 6px; }
+
+.refundRight { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; min-width: 140px; }
+.amount { font-size: 22px; font-weight: 700; color: #202124; }
+.statusBadge { padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600; }
+
+.actions { display: flex; gap: 8px; }
+.approveBtn { padding: 7px 14px; background: #E6F4EA; color: #34A853; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; }
+.approveBtn:hover { background: #C8E6C9; }
+.rejectBtn { padding: 7px 14px; background: #FEE8E8; color: #D93025; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; }
+.rejectBtn:hover { background: #FFCDD2; }
+
+.rejectPanel { width: 100%; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; border-top: 1px solid #F1F3F4; padding-top: 14px; margin-top: 4px; }
+.rejectInput { flex: 1; min-width: 200px; padding: 10px 14px; border: 1.5px solid #DADCE0; border-radius: 8px; font-size: 14px; outline: none; }
+.rejectInput:focus { border-color: #D93025; }
+.confirmRejectBtn { padding: 10px 18px; background: #D93025; color: white; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+.confirmRejectBtn:disabled { opacity: 0.5; cursor: not-allowed; }
+.cancelBtn { padding: 10px 16px; background: white; border: 1.5px solid #DADCE0; border-radius: 8px; font-size: 13px; cursor: pointer; color: #5F6368; }
+
+.empty { text-align: center; padding: 40px; background: white; border-radius: 14px; color: #5F6368; }

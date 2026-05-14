@@ -1,0 +1,100 @@
+export const COLORS = {
+  primary: '#1A73E8',
+  primaryDark: '#1557B0',
+  secondary: '#34A853',
+  accent: '#FF6D00',
+  background: '#F8F9FA',
+  white: '#FFFFFF',
+  black: '#000000',
+  text: '#202124',
+  textSecondary: '#5F6368',
+  border: '#DADCE0',
+  error: '#D93025',
+  success: '#34A853',
+  warning: '#F9AB00',
+  card: '#FFFFFF',
+  shadow: '#00000020',
+};
+
+export const FONTS = {
+  regular: 'System',
+  bold: 'System',
+};
+
+export const CONCERNS = [
+  { id: 'hair', label: 'Hair Fall', labelHi: 'बाल झड़ना', icon: '💇', color: '#FF6B6B' },
+  { id: 'skin', label: 'Skin Problems', labelHi: 'त्वचा समस्या', icon: '🧴', color: '#4ECDC4' },
+  { id: 'sexual', label: 'Sexual Health', labelHi: 'यौन स्वास्थ्य', icon: '❤️', color: '#FF8B94' },
+  { id: 'diabetes', label: 'Diabetes', labelHi: 'मधुमेह', icon: '🩸', color: '#A8E6CF' },
+  { id: 'stress', label: 'Mental Stress', labelHi: 'मानसिक तनाव', icon: '🧠', color: '#DDA0DD' },
+  { id: 'weight', label: 'Weight Issues', labelHi: 'वजन की समस्या', icon: '⚖️', color: '#FFD93D' },
+];
+
+export const PLANS = [
+  {
+    id: 'freemium',
+    name: 'Freemium',
+    nameHi: 'मुफ्त',
+    price: 0,
+    period: 'forever',
+    color: '#6C757D',
+    features: ['3 AI questions/day', 'Basic health tips', 'Doctor @ ₹199 extra'],
+    consultPrice: 199,
+  },
+  {
+    id: 'rural',
+    name: 'Rural Basic',
+    nameHi: 'ग्रामीण बेसिक',
+    price: 149,
+    period: 'month',
+    color: '#28A745',
+    features: ['Unlimited AI chat', 'Hindi support', 'Doctor @ ₹199 extra'],
+    consultPrice: 199,
+    tag: 'Rural Friendly',
+  },
+  {
+    id: 'standard',
+    name: 'Standard',
+    nameHi: 'स्टैंडर्ड',
+    price: 299,
+    period: 'month',
+    color: '#1A73E8',
+    features: ['Unlimited AI', 'Progress tracking', 'Dashboard', 'Doctor @ ₹199 extra'],
+    consultPrice: 199,
+    tag: 'Popular',
+  },
+  {
+    id: 'care',
+    name: 'Care',
+    nameHi: 'केयर',
+    price: 599,
+    period: 'month',
+    color: '#FF6D00',
+    features: ['All Standard features', '1 free consultation', 'Extra @ ₹149'],
+    consultPrice: 149,
+    tag: 'Best Value',
+  },
+  {
+    id: 'multicare',
+    name: 'Multi-Care',
+    nameHi: 'मल्टी-केयर',
+    price: 999,
+    period: 'month',
+    color: '#6F42C1',
+    features: ['All concerns covered', '2 free consultations', 'Priority support', 'Extra @ ₹149'],
+    consultPrice: 149,
+  },
+  {
+    id: 'annual',
+    name: 'Annual Care',
+    nameHi: 'वार्षिक केयर',
+    price: 2499,
+    period: 'year',
+    color: '#DC3545',
+    features: ['Standard features', 'Best annual value', 'Doctor @ ₹149'],
+    consultPrice: 149,
+    tag: 'Save 30%',
+  },
+];
+
+export const API_BASE_URL = 'https://api.healthai-india.com'; // Replace with actual API URL
