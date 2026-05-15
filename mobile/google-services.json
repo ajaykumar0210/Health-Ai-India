@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "738075468552",
+    "project_id": "health-ai-india",
+    "storage_bucket": "health-ai-india.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:738075468552:android:7f71517ff37d77ddb882bd",
+        "android_client_info": {
+          "package_name": "com.healthaiindia.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "738075468552-dj2533tteuu573e28cqbdnmmf9ca76nm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC2tFrwOZz4pFLqSYoQsyq0r-As_TxajrI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "738075468552-dj2533tteuu573e28cqbdnmmf9ca76nm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
