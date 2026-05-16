@@ -10,7 +10,7 @@ export default function VideoConsultScreen({ navigation, route }) {
   return (
     <View style={styles.container}>
       <View style={styles.videoArea}>
-        <Text style={styles.videoPlaceholder}>ðŸ“¹</Text>
+        <Text style={styles.videoPlaceholder}>📹</Text>
         <Text style={styles.videoText}>Video consultation</Text>
         <Text style={styles.videoSub}>
           Agora.io video SDK will be integrated here in Phase 2{'\n'}
@@ -21,7 +21,7 @@ export default function VideoConsultScreen({ navigation, route }) {
       {/* Controls */}
       <View style={styles.controls}>
         <TouchableOpacity style={[styles.controlBtn, styles.muteBtn]}>
-          <Text style={styles.controlIcon}>ðŸŽ¤</Text>
+          <Text style={styles.controlIcon}>🎤</Text>
           <Text style={styles.controlLabel}>Mute</Text>
         </TouchableOpacity>
 
@@ -29,12 +29,12 @@ export default function VideoConsultScreen({ navigation, route }) {
           style={[styles.controlBtn, styles.endBtn]}
           onPress={() => navigation.navigate('Home')}
         >
-          <Text style={styles.controlIcon}>ðŸ“µ</Text>
-          <Text style={[styles.controlLabel, { color: '#fff' }]}>End Call</Text>
+          <Text style={styles.controlIcon}>📵</Text>
+          <Text style={[styles.controlLabel, { color: '#111827' }]}>End Call</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={[styles.controlBtn, styles.camBtn]}>
-          <Text style={styles.controlIcon}>ðŸ“·</Text>
+          <Text style={styles.controlIcon}>📷</Text>
           <Text style={styles.controlLabel}>Camera</Text>
         </TouchableOpacity>
       </View>
@@ -42,10 +42,10 @@ export default function VideoConsultScreen({ navigation, route }) {
       <ScrollView style={styles.infoPanel}>
         <View style={styles.consultInfo}>
           <Text style={styles.infoTitle}>Consultation Details</Text>
-          <Text style={styles.infoItem}>ðŸ‘¨â€âš•ï¸ Doctor: {consultation?.doctorName || 'Dr. Priya Sharma'}</Text>
+          <Text style={styles.infoItem}>👨‍⚕️ Doctor: {consultation?.doctorName || 'Dr. Priya Sharma'}</Text>
           <Text style={styles.infoItem}>â±ï¸ Minimum duration: 15 minutes</Text>
-          <Text style={styles.infoItem}>ðŸ”’ This call is private and encrypted</Text>
-          <Text style={styles.infoItem}>ðŸ“‹ Prescription will be available after the call</Text>
+          <Text style={styles.infoItem}>🔒 This call is private and encrypted</Text>
+          <Text style={styles.infoItem}>📋 Prescription will be available after the call</Text>
         </View>
       </ScrollView>
     </View>
@@ -53,28 +53,28 @@ export default function VideoConsultScreen({ navigation, route }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#122640' },
+  container: { flex: 1, backgroundColor: '#F3F4F6' },
   videoArea: {
     flex: 1, alignItems: 'center', justifyContent: 'center',
     backgroundColor: '#16213e',
   },
   videoPlaceholder: { fontSize: 80, marginBottom: 16 },
-  videoText: { fontSize: 22, fontWeight: 'bold', color: '#fff', marginBottom: 8 },
-  videoSub: { fontSize: 13, color: 'rgba(255,255,255,0.6)', textAlign: 'center', paddingHorizontal: 40, lineHeight: 20 },
+  videoText: { fontSize: 22, fontWeight: 'bold', color: '#111827', marginBottom: 8 },
+  videoSub: { fontSize: 13, color: '#6B7280', textAlign: 'center', paddingHorizontal: 40, lineHeight: 20 },
   controls: {
     flexDirection: 'row', justifyContent: 'space-around',
-    padding: 20, backgroundColor: '#122640',
+    padding: 20, backgroundColor: '#F3F4F6',
   },
   controlBtn: {
     width: 70, height: 70, borderRadius: 35,
     alignItems: 'center', justifyContent: 'center',
-    backgroundColor: 'rgba(255,255,255,0.1)',
+    backgroundColor: 'rgba(0,0,0,0.04)',
   },
   muteBtn: {},
   endBtn: { backgroundColor: COLORS.error },
   camBtn: {},
   controlIcon: { fontSize: 24 },
-  controlLabel: { fontSize: 11, color: 'rgba(255,255,255,0.7)', marginTop: 4 },
+  controlLabel: { fontSize: 11, color: '#6B7280', marginTop: 4 },
   infoPanel: { maxHeight: 180, backgroundColor: COLORS.white },
   consultInfo: { padding: 16 },
   infoTitle: { fontSize: 14, fontWeight: 'bold', color: COLORS.text, marginBottom: 10 },

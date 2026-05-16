@@ -10,7 +10,7 @@ export default function PlansScreen({ navigation }) {
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      <StatusBar backgroundColor={COLORS.primary} barStyle="light-content" />
+      <StatusBar backgroundColor={COLORS.primary} barStyle="dark-content" />
 
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -97,8 +97,8 @@ const styles = StyleSheet.create({
   header: {
     backgroundColor: COLORS.primary, padding: 20, paddingTop: 48,
   },
-  back: { color: 'rgba(255,255,255,0.8)', fontSize: 22, marginBottom: 8 },
-  heading: { fontSize: 24, fontWeight: 'bold', color: '#fff' },
+  back: { color: '#4B5563', fontSize: 22, marginBottom: 8 },
+  heading: { fontSize: 24, fontWeight: 'bold', color: '#111827' },
   sub: { fontSize: 14, color: '#B3D4FF', marginTop: 4 },
   trustRow: {
     flexDirection: 'row', justifyContent: 'space-around',
@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
     position: 'absolute', top: -10, right: 16,
     paddingHorizontal: 12, paddingVertical: 4, borderRadius: 12,
   },
-  tagText: { color: '#fff', fontSize: 11, fontWeight: 'bold' },
+  tagText: { color: '#111827', fontSize: 11, fontWeight: 'bold' },
   planNameHi: { fontSize: 18, fontWeight: 'bold', color: COLORS.text },
   planName: { fontSize: 13, color: COLORS.textSecondary, marginBottom: 10 },
   priceRow: { flexDirection: 'row', alignItems: 'baseline', marginBottom: 16 },
@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
   consultLabel: { fontSize: 13, color: COLORS.textSecondary },
   consultPrice: { fontSize: 15, fontWeight: 'bold' },
   selectBtn: { borderRadius: 10, paddingVertical: 14, alignItems: 'center' },
-  selectBtnText: { color: '#fff', fontWeight: 'bold', fontSize: 15 },
+  selectBtnText: { color: '#111827', fontWeight: 'bold', fontSize: 15 },
   note: {
     fontSize: 12, color: COLORS.textSecondary,
     margin: 16, lineHeight: 18, textAlign: 'center',

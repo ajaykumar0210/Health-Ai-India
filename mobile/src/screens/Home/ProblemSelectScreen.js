@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
     width: 22, height: 22, borderRadius: 11,
     alignItems: 'center', justifyContent: 'center',
   },
-  checkText: { color: '#fff', fontSize: 12, fontWeight: 'bold' },
+  checkText: { color: '#111827', fontSize: 12, fontWeight: 'bold' },
   multiInfo: {
     backgroundColor: '#E8F0FE', borderRadius: 10,
     padding: 14, marginBottom: 16,
@@ -110,5 +110,5 @@ const styles = StyleSheet.create({
     paddingVertical: 16, alignItems: 'center', marginTop: 4,
   },
   btnDisabled: { backgroundColor: COLORS.border },
-  btnText: { color: '#fff', fontWeight: 'bold', fontSize: 15 },
+  btnText: { color: '#111827', fontWeight: 'bold', fontSize: 15 },
 });

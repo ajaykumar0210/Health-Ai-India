@@ -4,7 +4,7 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import useAppStore from '../../store/useAppStore';
-import { COLORS, GRADIENTS, FONTS } from '../../utils/constants';
+import { COLORS, FONTS } from '../../utils/constants';
 
 const { width, height } = Dimensions.get('window');
 
@@ -21,7 +21,6 @@ export default function SplashScreen({ navigation }) {
   const ring2Scale = useRef(new Animated.Value(0.5)).current;
 
   useEffect(() => {
-    // Logo entrance
     Animated.sequence([
       Animated.parallel([
         Animated.spring(logoScale, { toValue: 1, friction: 6, tension: 80, useNativeDriver: true }),
@@ -34,7 +33,6 @@ export default function SplashScreen({ navigation }) {
       Animated.timing(badgeOpacity, { toValue: 1, duration: 400, useNativeDriver: true }),
     ]).start();
 
-    // Pulsing rings
     Animated.loop(
       Animated.sequence([
         Animated.parallel([
@@ -51,15 +49,16 @@ export default function SplashScreen({ navigation }) {
     const init = async () => {
       await loadAuth();
       setTimeout(() => {
-        navigation.replace(isAuthenticated ? 'MainTabs' : 'Onboarding');
+        const { isAuthenticated: authed } = useAppStore.getState();
+        navigation.replace(authed ? 'MainTabs' : 'Onboarding');
       }, 2800);
     };
     init();
   }, []);
 
   return (
-    <LinearGradient colors={GRADIENTS.hero} style={styles.container} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
-      <StatusBar translucent backgroundColor="transparent" barStyle="light-content" />
+    <LinearGradient colors={['#FFFFFF', '#F9FAFB', '#FFFFFF']} style={styles.container} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
+      <StatusBar translucent backgroundColor="transparent" barStyle="dark-content" />
 
       {/* Decorative rings */}
       <Animated.View style={[styles.ring, styles.ring1, { transform: [{ scale: ring1Scale }] }]} />
@@ -67,8 +66,8 @@ export default function SplashScreen({ navigation }) {
 
       {/* Logo container */}
       <Animated.View style={[styles.logoWrap, { opacity: logoOpacity, transform: [{ scale: logoScale }] }]}>
-        <LinearGradient colors={['#1E3A5F', '#3B82C4']} style={styles.logoCircle}>
-          <Text style={styles.logoEmoji}>âš•ï¸</Text>
+        <LinearGradient colors={['#D4A017', '#B8860B']} style={styles.logoCircle}>
+          <Text style={styles.logoEmoji}>{'\u2695\uFE0F'}</Text>
         </LinearGradient>
       </Animated.View>
 
@@ -84,13 +83,13 @@ export default function SplashScreen({ navigation }) {
 
       {/* Tagline */}
       <Animated.View style={[styles.taglineWrap, { opacity: taglineOpacity, transform: [{ translateY: taglineY }] }]}>
-        <Text style={styles.tagline}>à¤†à¤ªà¤•à¥€ à¤¸à¥‡à¤¹à¤¤, à¤¹à¤®à¤¾à¤°à¥€ à¤œà¤¿à¤®à¥à¤®à¥‡à¤¦à¤¾à¤°à¥€</Text>
+        <Text style={styles.tagline}>{'\u0906\u092A\u0915\u0940 \u0938\u0947\u0939\u0924, \u0939\u092E\u093E\u0930\u0940 \u091C\u093F\u092E\u094D\u092E\u0947\u0926\u093E\u0930\u0940'}</Text>
         <Text style={styles.taglineEn}>Your Health. Our Responsibility.</Text>
       </Animated.View>
 
       {/* Trust badges */}
       <Animated.View style={[styles.badgeRow, { opacity: badgeOpacity }]}>
-        {['10M+ Users', 'NABH Certified', 'Made in India ðŸ‡®ðŸ‡³'].map((b, i) => (
+        {['10M+ Users', 'NABH Certified', 'Made in India \uD83C\uDDEE\uD83C\uDDF3'].map((b, i) => (
           <View key={i} style={styles.badge}>
             <Text style={styles.badgeText}>{b}</Text>
           </View>
@@ -102,50 +101,24 @@ export default function SplashScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   container: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  ring: {
-    position: 'absolute',
-    borderRadius: 999,
-    borderWidth: 1,
-    borderColor: 'rgba(255,92,0,0.15)',
-  },
-  ring1: { width: 320, height: 320 },
-  ring2: { width: 500, height: 500, borderColor: 'rgba(255,255,255,0.05)' },
+  ring: { position: 'absolute', borderRadius: 999, borderWidth: 1 },
+  ring1: { width: 200, height: 200, borderColor: 'rgba(212,160,23,0.15)' },
+  ring2: { width: 280, height: 280, borderColor: 'rgba(212,160,23,0.08)' },
   logoWrap: { marginBottom: 24 },
   logoCircle: {
     width: 100, height: 100, borderRadius: 30,
     alignItems: 'center', justifyContent: 'center',
-    shadowColor: '#1E3A5F', shadowOffset: { width: 0, height: 12 },
-    shadowOpacity: 0.5, shadowRadius: 24, elevation: 16,
+    shadowColor: '#D4A017', shadowOffset: { width: 0, height: 12 }, shadowOpacity: 0.5, shadowRadius: 24, elevation: 20,
   },
-  logoEmoji: { fontSize: 48 },
-  appName: {
-    fontFamily: FONTS.bold, fontSize: 34, color: '#FFFFFF',
-    letterSpacing: 0.5, textAlign: 'center',
-  },
-  tagRow: { flexDirection: 'row', alignItems: 'center', marginTop: 6, gap: 8 },
-  dot: { width: 4, height: 4, borderRadius: 2, backgroundColor: '#1E3A5F' },
-  tagSub: {
-    fontFamily: FONTS.semiBold, fontSize: 11, color: '#3B82C4',
-    letterSpacing: 3,
-  },
-  taglineWrap: { alignItems: 'center', marginTop: 40, paddingHorizontal: 40 },
-  tagline: {
-    fontFamily: FONTS.medium, fontSize: 17, color: 'rgba(255,255,255,0.9)',
-    textAlign: 'center', marginBottom: 6,
-  },
-  taglineEn: {
-    fontFamily: FONTS.regular, fontSize: 13, color: 'rgba(255,255,255,0.5)',
-    textAlign: 'center',
-  },
-  badgeRow: {
-    flexDirection: 'row', gap: 8, marginTop: 48,
-    position: 'absolute', bottom: 60,
-  },
-  badge: {
-    borderWidth: 1, borderColor: 'rgba(255,255,255,0.2)',
-    borderRadius: 20, paddingHorizontal: 12, paddingVertical: 5,
-    backgroundColor: 'rgba(255,255,255,0.07)',
-  },
-  badgeText: { fontFamily: FONTS.medium, fontSize: 11, color: 'rgba(255,255,255,0.7)' },
+  logoEmoji: { fontSize: 44 },
+  appName: { fontFamily: FONTS.bold, fontSize: 32, color: '#111827', marginBottom: 6 },
+  tagRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  dot: { width: 4, height: 4, borderRadius: 2, backgroundColor: '#D4A017' },
+  tagSub: { fontFamily: FONTS.semiBold, fontSize: 11, color: '#D4A017', letterSpacing: 3 },
+  taglineWrap: { marginTop: 32, alignItems: 'center' },
+  tagline: { fontFamily: FONTS.medium, fontSize: 16, color: '#6B7280', textAlign: 'center' },
+  taglineEn: { fontFamily: FONTS.regular, fontSize: 13, color: '#6B7280', marginTop: 4, opacity: 0.7 },
+  badgeRow: { flexDirection: 'row', gap: 10, marginTop: 40, position: 'absolute', bottom: 60 },
+  badge: { backgroundColor: 'rgba(212,160,23,0.08)', borderRadius: 20, paddingHorizontal: 12, paddingVertical: 6, borderWidth: 1, borderColor: 'rgba(212,160,23,0.2)' },
+  badgeText: { fontFamily: FONTS.medium, fontSize: 11, color: '#D4A017' },
 });
-

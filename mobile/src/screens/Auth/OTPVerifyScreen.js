@@ -2,21 +2,21 @@
 import {
   View, Text, StyleSheet, TextInput, TouchableOpacity,
   KeyboardAvoidingView, Platform, Alert, StatusBar, Animated,
+  ActivityIndicator,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { signInWithPhoneNumber } from 'firebase/auth';
-import { COLORS, GRADIENTS, FONTS } from '../../utils/constants';
-import { auth } from '../../utils/firebase';
-import { getPhoneConfirmation, clearPhoneConfirmation, setPhoneConfirmation } from '../../utils/authState';
+import { COLORS, FONTS } from '../../utils/constants';
+import { sendOTP, getUserProfile } from '../../utils/firebase';
 import useAppStore from '../../store/useAppStore';
 
 export default function OTPVerifyScreen({ navigation, route }) {
-  const { phone } = route.params;
+  const { phone, confirmationResult } = route.params;
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [loading, setLoading] = useState(false);
   const [timer, setTimer] = useState(30);
+  const [confirmation, setConfirmation] = useState(confirmationResult);
   const inputs = useRef([]);
   const setToken = useAppStore((s) => s.setToken);
   const setUser = useAppStore((s) => s.setUser);
@@ -65,42 +65,30 @@ export default function OTPVerifyScreen({ navigation, route }) {
 
   const verifyOTP = async (code) => {
     setLoading(true);
-    const confirmation = getPhoneConfirmation();
     try {
-      if (confirmation) {
-        // â”€â”€ Real Firebase Phone Auth â”€â”€
-        const result = await confirmation.confirm(code);
-        clearPhoneConfirmation();
-        const token = await result.user.getIdToken();
-        await AsyncStorage.setItem('auth_token', token);
-        const user = { id: result.user.uid, phone: result.user.phoneNumber, name: '' };
-        await AsyncStorage.setItem('user_data', JSON.stringify(user));
-        setToken(token);
-        setUser(user);
-        navigation.replace('ProfileSetup');
+      const result = await confirmation.confirm(code);
+      const fbUser = result.user;
+      const token = await fbUser.getIdToken();
+      const profile = await getUserProfile(fbUser.uid);
+      const userData = { id: fbUser.uid, phone: fbUser.phoneNumber, name: profile?.name, ...profile };
+      await AsyncStorage.setItem('auth_token', token);
+      await AsyncStorage.setItem('user_data', JSON.stringify(userData));
+      setToken(token);
+      setUser(userData);
+      if (userData.name && userData.name.trim()) {
+        navigation.replace('MainTabs');
       } else {
-        // â”€â”€ Dev fallback (Firebase not configured / web) â”€â”€
-        if (code === '123456') {
-          const mockUser = { id: 1, phone, name: '', isNew: true };
-          await AsyncStorage.setItem('auth_token', 'mock_token_dev');
-          await AsyncStorage.setItem('user_data', JSON.stringify(mockUser));
-          setToken('mock_token_dev');
-          setUser(mockUser);
-          navigation.replace('ProfileSetup');
-        } else {
-          throw new Error('wrong_otp');
-        }
+        navigation.replace('ProfileSetup', { uid: fbUser.uid, phone: fbUser.phoneNumber });
       }
     } catch (err) {
-      const isWrong = err.code === 'auth/invalid-verification-code' || err.message === 'wrong_otp';
       shake();
       setOtp(['', '', '', '', '', '']);
       setTimeout(() => inputs.current[0]?.focus(), 100);
       Alert.alert(
         'Invalid OTP',
-        isWrong
+        err.code === 'auth/invalid-verification-code'
           ? 'The code you entered is incorrect. Please try again.'
-          : 'Verification failed. Please check your OTP and try again.\n\nðŸ’¡ Dev mode: use 123456',
+          : err.message || 'Verification failed. Please try again.',
       );
     } finally {
       setLoading(false);
@@ -112,41 +100,40 @@ export default function OTPVerifyScreen({ navigation, route }) {
     setOtp(['', '', '', '', '', '']);
     inputs.current[0]?.focus();
     try {
-      const confirmation = await signInWithPhoneNumber(auth, phone);
-      setPhoneConfirmation(confirmation);
-    } catch (_) {
-      // Firebase not configured â€” dev mode
+      const newConfirmation = await sendOTP(phone);
+      setConfirmation(newConfirmation);
+      Alert.alert('OTP Sent', 'A new OTP has been sent to your phone.');
+    } catch (err) {
+      Alert.alert('Error', err.message || 'Failed to resend OTP. Please try again.');
     }
   };
 
-  const masked = phone.includes('@')
-    ? phone.replace(/(.{2}).+(@.+)/, '$1****$2')
-    : phone.replace(/(\+91)(\d{2})\d{6}(\d{2})/, '$1-$2XXXXXX$3');
+  const masked = phone.replace(/(\+91)(\d{2})\d{6}(\d{2})/, '$1-$2XXXXXX$3');
 
   return (
     <KeyboardAvoidingView
       style={styles.root}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
-      <StatusBar translucent backgroundColor="transparent" barStyle="light-content" />
+      <StatusBar translucent backgroundColor="transparent" barStyle="dark-content" />
 
       {/* Top hero */}
-      <LinearGradient colors={GRADIENTS.hero} style={styles.hero} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
+      <LinearGradient colors={['#FFFFFF', '#F9FAFB', '#FFFFFF']} style={styles.hero} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
         <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={22} color="#fff" />
+          <Ionicons name="arrow-back" size={22} color="#111827" />
         </TouchableOpacity>
         <View style={styles.otpIconWrap}>
-          <Text style={styles.otpIconEmoji}>ðŸ“±</Text>
+          <Text style={styles.otpIconEmoji}>{'\uD83D\uDCF1'}</Text>
         </View>
         <Text style={styles.heroTitle}>Verify Your Number</Text>
         <Text style={styles.heroSub}>OTP sent to {masked}</Text>
       </LinearGradient>
 
-      {/* White card */}
+      {/* Dark card */}
       <View style={styles.card}>
         <Text style={styles.cardTitle}>Enter 6-Digit OTP</Text>
         <Text style={styles.cardSub}>
-          Check your SMS inbox. Dev mode: use <Text style={{ color: COLORS.primary, fontFamily: FONTS.bold }}>123456</Text>
+          Check your SMS inbox for the verification code.
         </Text>
 
         {/* OTP Boxes */}
@@ -178,18 +165,18 @@ export default function OTPVerifyScreen({ navigation, route }) {
           activeOpacity={0.85}
         >
           <LinearGradient
-            colors={loading || otp.join('').length < 6 ? ['#D1D5DB', '#D1D5DB'] : ['#1E3A5F', '#3B82C4']}
+            colors={loading || otp.join('').length < 6 ? ['#374151', '#374151'] : ['#D4A017', '#B8860B']}
             style={styles.verifyGradient}
             start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
           >
-            {loading
-              ? <Text style={styles.verifyText}>Verifying...</Text>
-              : (
-                <>
-                  <Ionicons name="checkmark-circle" size={20} color="#fff" style={{ marginRight: 8 }} />
-                  <Text style={styles.verifyText}>Verify OTP</Text>
-                </>
-              )}
+            {loading ? (
+              <ActivityIndicator color="#0B0B0B" size="small" />
+            ) : (
+              <>
+                <Ionicons name="checkmark-circle" size={20} color="#0B0B0B" style={{ marginRight: 8 }} />
+                <Text style={styles.verifyText}>Verify OTP</Text>
+              </>
+            )}
           </LinearGradient>
         </TouchableOpacity>
 
@@ -197,7 +184,7 @@ export default function OTPVerifyScreen({ navigation, route }) {
         <View style={styles.resendRow}>
           {timer > 0 ? (
             <Text style={styles.timerText}>
-              Resend OTP in <Text style={{ color: COLORS.primary, fontFamily: FONTS.bold }}>{timer}s</Text>
+              Resend OTP in <Text style={{ color: '#D4A017', fontFamily: FONTS.bold }}>{timer}s</Text>
             </Text>
           ) : (
             <TouchableOpacity onPress={handleResend}>
@@ -211,7 +198,7 @@ export default function OTPVerifyScreen({ navigation, route }) {
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: '#0B1929' },
+  root: { flex: 1, backgroundColor: '#FFFFFF' },
   hero: {
     paddingTop: 60, paddingBottom: 40, alignItems: 'center',
     paddingHorizontal: 24,
@@ -219,40 +206,40 @@ const styles = StyleSheet.create({
   backBtn: {
     position: 'absolute', top: 52, left: 20,
     width: 40, height: 40, borderRadius: 12,
-    backgroundColor: 'rgba(255,255,255,0.12)',
+    backgroundColor: 'rgba(212,160,23,0.15)',
     alignItems: 'center', justifyContent: 'center',
   },
   otpIconWrap: {
     width: 80, height: 80, borderRadius: 24,
-    backgroundColor: 'rgba(255,92,0,0.2)',
+    backgroundColor: 'rgba(212,160,23,0.15)',
     alignItems: 'center', justifyContent: 'center',
     marginBottom: 16,
-    borderWidth: 1, borderColor: 'rgba(255,92,0,0.3)',
+    borderWidth: 1, borderColor: 'rgba(212,160,23,0.3)',
   },
   otpIconEmoji: { fontSize: 36 },
-  heroTitle: { fontFamily: FONTS.bold, fontSize: 24, color: '#fff', marginBottom: 6 },
-  heroSub: { fontFamily: FONTS.regular, fontSize: 14, color: 'rgba(255,255,255,0.6)' },
+  heroTitle: { fontFamily: FONTS.bold, fontSize: 24, color: '#111827', marginBottom: 6 },
+  heroSub: { fontFamily: FONTS.regular, fontSize: 14, color: '#6B7280' },
 
   card: {
-    flex: 1, backgroundColor: COLORS.white,
+    flex: 1, backgroundColor: '#F3F4F6',
     borderTopLeftRadius: 28, borderTopRightRadius: 28,
     paddingHorizontal: 28, paddingTop: 32,
   },
-  cardTitle: { fontFamily: FONTS.bold, fontSize: 22, color: COLORS.text, marginBottom: 8 },
-  cardSub: { fontFamily: FONTS.regular, fontSize: 13, color: COLORS.textSecondary, marginBottom: 32, lineHeight: 20 },
+  cardTitle: { fontFamily: FONTS.bold, fontSize: 22, color: '#111827', marginBottom: 8 },
+  cardSub: { fontFamily: FONTS.regular, fontSize: 13, color: '#6B7280', marginBottom: 32, lineHeight: 20 },
 
   otpRow: { flexDirection: 'row', gap: 10, marginBottom: 32, justifyContent: 'center' },
   otpBox: {
     width: 48, height: 56, borderRadius: 14,
-    borderWidth: 2, borderColor: COLORS.border,
-    textAlign: 'center', fontFamily: FONTS.bold, fontSize: 22, color: COLORS.text,
-    backgroundColor: '#F8FAFC',
+    borderWidth: 2, borderColor: '#E5E7EB',
+    textAlign: 'center', fontFamily: FONTS.bold, fontSize: 22, color: '#111827',
+    backgroundColor: '#FFFFFF',
   },
   otpBoxFilled: {
-    borderColor: '#1E3A5F', backgroundColor: '#EBF2FA',
-    shadowColor: '#1E3A5F', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.2, shadowRadius: 8, elevation: 4,
+    borderColor: '#D4A017', backgroundColor: '#1A1A0A',
+    shadowColor: '#D4A017', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 8, elevation: 4,
   },
-  otpBoxActive: { borderColor: '#CBD5E1' },
+  otpBoxActive: { borderColor: '#9CA3AF' },
 
   verifyBtn: { borderRadius: 14, overflow: 'hidden' },
   verifyBtnDisabled: { opacity: 0.7 },
@@ -260,10 +247,10 @@ const styles = StyleSheet.create({
     paddingVertical: 16, flexDirection: 'row',
     alignItems: 'center', justifyContent: 'center',
   },
-  verifyText: { fontFamily: FONTS.bold, fontSize: 16, color: '#fff' },
+  verifyText: { fontFamily: FONTS.bold, fontSize: 16, color: '#0B0B0B' },
 
   resendRow: { alignItems: 'center', marginTop: 20 },
-  timerText: { fontFamily: FONTS.regular, fontSize: 14, color: COLORS.textSecondary },
-  resendText: { fontFamily: FONTS.regular, fontSize: 14, color: COLORS.textSecondary },
-  resendLink: { fontFamily: FONTS.semiBold, color: COLORS.primary },
+  timerText: { fontFamily: FONTS.regular, fontSize: 14, color: '#6B7280' },
+  resendText: { fontFamily: FONTS.regular, fontSize: 14, color: '#6B7280' },
+  resendLink: { fontFamily: FONTS.semiBold, color: '#D4A017' },
 });

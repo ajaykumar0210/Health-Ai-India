@@ -32,12 +32,12 @@ export default function SleepTrackerScreen({ navigation }) {
 
   return (
     <View style={styles.root}>
-      <StatusBar translucent backgroundColor="transparent" barStyle="light-content" />
+      <StatusBar translucent backgroundColor="transparent" barStyle="dark-content" />
 
       {/* Header */}
       <LinearGradient colors={['#1E1B4B', '#4338CA']} style={styles.header} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
         <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={22} color="#fff" />
+          <Ionicons name="arrow-back" size={22} color="#111827" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Sleep Tracker</Text>
         <Text style={styles.headerSub}>Poor sleep = Hair fall + Skin issues</Text>
@@ -145,19 +145,19 @@ const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: COLORS.background },
   header: { paddingTop: 56, paddingBottom: 28, paddingHorizontal: 20 },
   backBtn: {
-    width: 40, height: 40, borderRadius: 12, backgroundColor: 'rgba(255,255,255,0.12)',
+    width: 40, height: 40, borderRadius: 12, backgroundColor: 'rgba(0,0,0,0.05)',
     alignItems: 'center', justifyContent: 'center', marginBottom: 14,
   },
-  headerTitle: { fontFamily: FONTS.bold, fontSize: 24, color: '#fff', marginBottom: 4 },
-  headerSub: { fontFamily: FONTS.regular, fontSize: 13, color: 'rgba(255,255,255,0.6)', marginBottom: 20 },
+  headerTitle: { fontFamily: FONTS.bold, fontSize: 24, color: '#111827', marginBottom: 4 },
+  headerSub: { fontFamily: FONTS.regular, fontSize: 13, color: '#6B7280', marginBottom: 20 },
   statsRow: { flexDirection: 'row', gap: 12 },
   statCard: {
-    flex: 1, backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: 16, padding: 14,
-    alignItems: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.15)',
+    flex: 1, backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: 16, padding: 14,
+    alignItems: 'center', borderWidth: 1, borderColor: '#E5E7EB',
   },
   statIcon: { fontSize: 20, marginBottom: 4 },
-  statVal: { fontFamily: FONTS.bold, fontSize: 16, color: '#fff' },
-  statLabel: { fontFamily: FONTS.regular, fontSize: 10, color: 'rgba(255,255,255,0.6)', marginTop: 2 },
+  statVal: { fontFamily: FONTS.bold, fontSize: 16, color: '#111827' },
+  statLabel: { fontFamily: FONTS.regular, fontSize: 10, color: '#6B7280', marginTop: 2 },
 
   body: { padding: 16 },
   section: { marginBottom: 24 },

@@ -10,23 +10,23 @@ import { COLORS, GRADIENTS, FONTS } from '../../utils/constants';
 const REPORTS = [
   {
     id: '1', type: 'Blood Test', date: 'May 10, 2026', doctor: 'Dr. Priya Sharma',
-    status: 'normal', icon: 'ðŸ©¸', tests: ['Haemoglobin: 13.5 g/dL âœ“', 'Ferritin: 24 ng/mL âš ï¸ (Low)', 'Vitamin D: 18 ng/mL âš ï¸ (Low)'],
+    status: 'normal', icon: '🩸', tests: ['Haemoglobin: 13.5 g/dL ✓', 'Ferritin: 24 ng/mL ⚠️ (Low)', 'Vitamin D: 18 ng/mL ⚠️ (Low)'],
   },
   {
     id: '2', type: 'Thyroid Panel', date: 'Apr 28, 2026', doctor: 'Dr. Rajan Mehta',
-    status: 'attention', icon: 'ðŸ§ª', tests: ['TSH: 4.8 mIU/L âš ï¸', 'T3: 1.1 ng/mL âœ“', 'T4: 7.8 Î¼g/dL âœ“'],
+    status: 'attention', icon: '🧪', tests: ['TSH: 4.8 mIU/L ⚠️', 'T3: 1.1 ng/mL ✓', 'T4: 7.8 μg/dL ✓'],
   },
   {
     id: '3', type: 'Vitamin Panel', date: 'Apr 15, 2026', doctor: 'Self-uploaded',
-    status: 'normal', icon: 'ðŸ’Š', tests: ['Vitamin B12: 280 pg/mL âœ“', 'Vitamin D: 24 ng/mL âœ“', 'Zinc: 68 Î¼g/dL âœ“'],
+    status: 'normal', icon: '💊', tests: ['Vitamin B12: 280 pg/mL ✓', 'Vitamin D: 24 ng/mL ✓', 'Zinc: 68 μg/dL ✓'],
   },
 ];
 
 const UPLOAD_TYPES = [
-  { label: 'Blood Test', icon: 'ðŸ©¸', gradient: ['#DC2626', '#F87171'] },
-  { label: 'Scan/X-Ray', icon: 'ðŸ”¬', gradient: ['#059669', '#34D399'] },
-  { label: 'Prescription', icon: 'ðŸ“‹', gradient: ['#0D9488', '#14B8A6'] },
-  { label: 'Other Report', icon: 'ðŸ“„', gradient: ['#D97706', '#FBBF24'] },
+  { label: 'Blood Test', icon: '🩸', gradient: ['#DC2626', '#F87171'] },
+  { label: 'Scan/X-Ray', icon: '🔬', gradient: ['#059669', '#34D399'] },
+  { label: 'Prescription', icon: '📋', gradient: ['#D4A017', '#E6B422'] },
+  { label: 'Other Report', icon: '📄', gradient: ['#D97706', '#FBBF24'] },
 ];
 
 export default function LabReportsScreen({ navigation }) {
@@ -34,11 +34,11 @@ export default function LabReportsScreen({ navigation }) {
 
   return (
     <View style={styles.root}>
-      <StatusBar translucent backgroundColor="transparent" barStyle="light-content" />
+      <StatusBar translucent backgroundColor="transparent" barStyle="dark-content" />
 
       <LinearGradient colors={['#1E1B4B', '#4338CA']} style={styles.header}>
         <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={22} color="#fff" />
+          <Ionicons name="arrow-back" size={22} color="#111827" />
         </TouchableOpacity>
         <View style={styles.headerRow}>
           <View>
@@ -49,7 +49,7 @@ export default function LabReportsScreen({ navigation }) {
             style={styles.uploadBtn}
             onPress={() => Alert.alert('Upload Report', 'Select report type to upload')}
           >
-            <Ionicons name="cloud-upload-outline" size={18} color="#fff" />
+            <Ionicons name="cloud-upload-outline" size={18} color="#111827" />
             <Text style={styles.uploadBtnText}>Upload</Text>
           </TouchableOpacity>
         </View>
@@ -72,8 +72,8 @@ export default function LabReportsScreen({ navigation }) {
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.body}>
           {/* AI Insights banner */}
           <View style={styles.insightBanner}>
-            <LinearGradient colors={['#1E3A5F', '#3B82C4']} style={styles.insightGrad}>
-              <Text style={styles.insightIcon}>ðŸ¤–</Text>
+            <LinearGradient colors={['#D4A017', '#B8860B']} style={styles.insightGrad}>
+              <Text style={styles.insightIcon}>🤖</Text>
               <View style={{ flex: 1 }}>
                 <Text style={styles.insightTitle}>AI found 2 deficiencies</Text>
                 <Text style={styles.insightSub}>Low Ferritin & Vitamin D may be causing your hair fall. Tap to see treatment plan.</Text>
@@ -91,7 +91,7 @@ export default function LabReportsScreen({ navigation }) {
                 </View>
                 <View style={{ flex: 1 }}>
                   <Text style={styles.reportType}>{r.type}</Text>
-                  <Text style={styles.reportMeta}>{r.doctor} â€¢ {r.date}</Text>
+                  <Text style={styles.reportMeta}>{r.doctor} • {r.date}</Text>
                 </View>
                 <View style={[
                   styles.statusBadge,
@@ -101,7 +101,7 @@ export default function LabReportsScreen({ navigation }) {
                     styles.statusText,
                     { color: r.status === 'normal' ? COLORS.success : COLORS.warning }
                   ]}>
-                    {r.status === 'normal' ? 'âœ“ Normal' : 'âš ï¸ Attention'}
+                    {r.status === 'normal' ? '✓ Normal' : '⚠️ Attention'}
                   </Text>
                 </View>
               </View>
@@ -110,7 +110,7 @@ export default function LabReportsScreen({ navigation }) {
                 {r.tests.map((t, i) => (
                   <Text key={i} style={[
                     styles.testItem,
-                    t.includes('âš ï¸') && { color: COLORS.warning, fontFamily: FONTS.semiBold }
+                    t.includes('⚠️') && { color: COLORS.warning, fontFamily: FONTS.semiBold }
                   ]}>{t}</Text>
                 ))}
               </View>
@@ -168,33 +168,33 @@ const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: COLORS.background },
   header: { paddingTop: 56, paddingBottom: 20, paddingHorizontal: 20 },
   backBtn: {
-    width: 40, height: 40, borderRadius: 12, backgroundColor: 'rgba(255,255,255,0.12)',
+    width: 40, height: 40, borderRadius: 12, backgroundColor: 'rgba(0,0,0,0.05)',
     alignItems: 'center', justifyContent: 'center', marginBottom: 14,
   },
   headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20 },
-  headerTitle: { fontFamily: FONTS.bold, fontSize: 22, color: '#fff', marginBottom: 4 },
-  headerSub: { fontFamily: FONTS.regular, fontSize: 12, color: 'rgba(255,255,255,0.6)' },
+  headerTitle: { fontFamily: FONTS.bold, fontSize: 22, color: '#111827', marginBottom: 4 },
+  headerSub: { fontFamily: FONTS.regular, fontSize: 12, color: '#6B7280' },
   uploadBtn: {
     flexDirection: 'row', alignItems: 'center', gap: 6,
     backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: 12,
     paddingHorizontal: 14, paddingVertical: 9,
   },
-  uploadBtnText: { fontFamily: FONTS.semiBold, fontSize: 13, color: '#fff' },
+  uploadBtnText: { fontFamily: FONTS.semiBold, fontSize: 13, color: '#111827' },
   tabRow: {
-    flexDirection: 'row', backgroundColor: 'rgba(255,255,255,0.1)',
+    flexDirection: 'row', backgroundColor: 'rgba(0,0,0,0.04)',
     borderRadius: 12, padding: 3,
   },
   tab: { flex: 1, paddingVertical: 9, borderRadius: 10, alignItems: 'center' },
   tabActive: { backgroundColor: 'rgba(255,255,255,0.2)' },
-  tabText: { fontFamily: FONTS.medium, fontSize: 13, color: 'rgba(255,255,255,0.6)' },
-  tabTextActive: { fontFamily: FONTS.semiBold, color: '#fff' },
+  tabText: { fontFamily: FONTS.medium, fontSize: 13, color: '#6B7280' },
+  tabTextActive: { fontFamily: FONTS.semiBold, color: '#111827' },
 
   body: { padding: 16 },
   insightBanner: { borderRadius: 18, overflow: 'hidden', marginBottom: 16 },
   insightGrad: { flexDirection: 'row', alignItems: 'center', padding: 16, gap: 12 },
   insightIcon: { fontSize: 28 },
-  insightTitle: { fontFamily: FONTS.bold, fontSize: 14, color: '#fff', marginBottom: 4 },
-  insightSub: { fontFamily: FONTS.regular, fontSize: 12, color: 'rgba(255,255,255,0.85)', lineHeight: 17 },
+  insightTitle: { fontFamily: FONTS.bold, fontSize: 14, color: '#111827', marginBottom: 4 },
+  insightSub: { fontFamily: FONTS.regular, fontSize: 12, color: '#4B5563', lineHeight: 17 },
 
   reportCard: {
     backgroundColor: COLORS.white, borderRadius: 18, padding: 16,
@@ -224,7 +224,7 @@ const styles = StyleSheet.create({
   uploadCard: { width: '47%', borderRadius: 18, overflow: 'hidden' },
   uploadCardGrad: { padding: 24, alignItems: 'center', gap: 10 },
   uploadCardIcon: { fontSize: 36 },
-  uploadCardLabel: { fontFamily: FONTS.bold, fontSize: 14, color: '#fff' },
+  uploadCardLabel: { fontFamily: FONTS.bold, fontSize: 14, color: '#111827' },
   uploadInfoBox: {
     flexDirection: 'row', alignItems: 'flex-start', gap: 12,
     backgroundColor: COLORS.successBg, borderRadius: 16, padding: 16,

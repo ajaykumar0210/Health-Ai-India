@@ -165,7 +165,7 @@ const styles = StyleSheet.create({
   header: {
     backgroundColor: COLORS.primary, padding: 20, paddingTop: 48,
   },
-  heading: { fontSize: 22, fontWeight: 'bold', color: '#fff' },
+  heading: { fontSize: 22, fontWeight: 'bold', color: '#111827' },
   sub: { fontSize: 14, color: '#B3D4FF', marginTop: 4 },
   streakCard: {
     flexDirection: 'row', alignItems: 'center',

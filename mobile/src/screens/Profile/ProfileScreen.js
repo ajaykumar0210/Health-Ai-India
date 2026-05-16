@@ -113,14 +113,14 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.3)', alignItems: 'center',
     justifyContent: 'center', marginBottom: 12,
   },
-  avatarText: { color: '#fff', fontSize: 30, fontWeight: 'bold' },
-  name: { fontSize: 20, fontWeight: 'bold', color: '#fff', marginBottom: 4 },
+  avatarText: { color: '#111827', fontSize: 30, fontWeight: 'bold' },
+  name: { fontSize: 20, fontWeight: 'bold', color: '#111827', marginBottom: 4 },
   phone: { fontSize: 14, color: '#B3D4FF', marginBottom: 10 },
   planBadge: {
     backgroundColor: 'rgba(255,255,255,0.2)',
     paddingHorizontal: 16, paddingVertical: 4, borderRadius: 12,
   },
-  planBadgeText: { color: '#fff', fontSize: 12, fontWeight: 'bold' },
+  planBadgeText: { color: '#111827', fontSize: 12, fontWeight: 'bold' },
   statsRow: {
     flexDirection: 'row', backgroundColor: COLORS.white,
     padding: 16, justifyContent: 'space-around', borderBottomWidth: 1, borderBottomColor: COLORS.border,

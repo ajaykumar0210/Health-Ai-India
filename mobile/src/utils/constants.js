@@ -1,70 +1,70 @@
-﻿// Traya-inspired premium Indian health app palette â€” Navy blue & teal
+﻿// Health AI India - Light + Gold theme
 export const COLORS = {
-  // Brand navy blue (CTAs, highlights) â€” like Traya
-  primary: '#1E3A5F',
-  primaryDark: '#0F2744',
-  primaryLight: '#3B82C4',
-  primaryBg: '#EBF2FA',
+  // Primary accent - Dark Yellow / Gold (10%)
+  primary: '#D4A017',
+  primaryDark: '#B8860B',
+  primaryLight: '#E6B422',
+  primaryBg: '#FEF9E7',
 
-  // Dark navy (hero backgrounds, headers) â€” premium feel
-  dark: '#0B1929',
-  darkCard: '#122640',
-  darkBorder: '#1E3A5F',
+  // Light backgrounds
+  dark: '#111827',
+  darkCard: '#F3F4F6',
+  darkBorder: '#E5E7EB',
 
-  // Cream (main background) â€” like Traya
-  background: '#F8FAFB',
-  cream: '#F0F5F8',
-  creamDark: '#DDE8EF',
+  // Background - White
+  background: '#FFFFFF',
+  cream: '#F9FAFB',
+  creamDark: '#F3F4F6',
 
   // Greens (success, health indicators)
-  success: '#059669',
+  success: '#10B981',
   successBg: '#D1FAE5',
   successLight: '#6EE7B7',
 
   // Reds & warnings
-  error: '#DC2626',
+  error: '#EF4444',
   errorBg: '#FEE2E2',
-  warning: '#D97706',
+  warning: '#F59E0B',
   warningBg: '#FEF3C7',
 
-  // Purple accent â€” like Traya premium
-  purple: '#0D9488',
-  purpleBg: '#EDE9FE',
-  purpleLight: '#14B8A6',
+  // Gold accent
+  accent: '#D4A017',
+  accentLight: '#E6B422',
+  accentDark: '#B8860B',
 
-  // Teal accent
-  teal: '#0D9488',
-  tealBg: '#CCFBF1',
+  // Teal kept for variety
+  teal: '#D4A017',
+  tealBg: '#FEF9E7',
 
   // Neutrals
-  card: '#FFFFFF',
+  card: '#F3F4F6',
   white: '#FFFFFF',
-  black: '#000000',
-  text: '#0B1929',
+  black: '#111827',
+  text: '#111827',
   textSecondary: '#6B7280',
   textLight: '#9CA3AF',
   textInverse: '#FFFFFF',
   border: '#E5E7EB',
   borderLight: '#F3F4F6',
-  shadow: 'rgba(15,14,23,0.10)',
-  overlay: 'rgba(15,14,23,0.6)',
+  shadow: 'rgba(0,0,0,0.08)',
+  overlay: 'rgba(0,0,0,0.5)',
 };
 
 export const GRADIENTS = {
-  // Dark hero â€” splash & onboarding hero
-  hero: ['#0B1929', '#122640', '#1E3A5F'],
-  // Navy CTA
-  orange: ['#1E3A5F', '#3B82C4'],
-  // Dark card
-  darkCard: ['#122640', '#0B1929'],
-  // Traya warm
-  warm: ['#F8FAFB', '#E8F0F5'],
+  // Hero - light elegant
+  hero: ['#FFFFFF', '#F9FAFB', '#FFFFFF'],
+  // Gold CTA
+  orange: ['#D4A017', '#B8860B'],
+  // Light card
+  darkCard: ['#F3F4F6', '#FFFFFF'],
+  // Warm light
+  warm: ['#FFFFFF', '#FEF9E7'],
   // Green health
-  green: ['#059669', '#0D9488'],
-  // Teal accent
-  purple: ['#0D9488', '#14B8A6'],
-  // Sunrise (hair/skin concern header)
-  sunrise: ['#1E3A5F', '#2D8EBF', '#5BADDB'],
+  green: ['#10B981', '#059669'],
+  // Gold accent
+  purple: ['#D4A017', '#B8860B'],
+  // Sunrise
+  sunrise: ['#FFFFFF', '#FEF9E7', '#F3F4F6'],
 };
 
 export const FONTS = {
@@ -75,79 +75,79 @@ export const FONTS = {
 };
 
 export const CONCERNS = [
-  { id: 'hair', label: 'Hair Fall', labelHi: 'à¤¬à¤¾à¤² à¤à¤¡à¤¼à¤¨à¤¾', icon: 'ðŸ’‡', color: '#FF6B6B' },
-  { id: 'skin', label: 'Skin Problems', labelHi: 'à¤¤à¥à¤µà¤šà¤¾ à¤¸à¤®à¤¸à¥à¤¯à¤¾', icon: 'ðŸ§´', color: '#4ECDC4' },
-  { id: 'sexual', label: 'Sexual Health', labelHi: 'à¤¯à¥Œà¤¨ à¤¸à¥à¤µà¤¾à¤¸à¥à¤¥à¥à¤¯', icon: 'â¤ï¸', color: '#FF8B94' },
-  { id: 'diabetes', label: 'Diabetes', labelHi: 'à¤®à¤§à¥à¤®à¥‡à¤¹', icon: 'ðŸ©¸', color: '#A8E6CF' },
-  { id: 'stress', label: 'Mental Stress', labelHi: 'à¤®à¤¾à¤¨à¤¸à¤¿à¤• à¤¤à¤¨à¤¾à¤µ', icon: 'ðŸ§ ', color: '#DDA0DD' },
-  { id: 'weight', label: 'Weight Issues', labelHi: 'à¤µà¤œà¤¨ à¤•à¥€ à¤¸à¤®à¤¸à¥à¤¯à¤¾', icon: 'âš–ï¸', color: '#FFD93D' },
+  { id: 'hair', label: 'Hair Fall', labelHi: '\u092C\u093E\u0932 \u091D\u0921\u093C\u0928\u093E', icon: '\uD83D\uDC87', color: '#D4A017' },
+  { id: 'skin', label: 'Skin Problems', labelHi: '\u0924\u094D\u0935\u091A\u093E \u0938\u092E\u0938\u094D\u092F\u093E', icon: '\uD83E\uDDF4', color: '#E6B422' },
+  { id: 'sexual', label: 'Sexual Health', labelHi: '\u092F\u094C\u0928 \u0938\u094D\u0935\u093E\u0938\u094D\u0925\u094D\u092F', icon: '\u2764\uFE0F', color: '#EF4444' },
+  { id: 'diabetes', label: 'Diabetes', labelHi: '\u092E\u0927\u0941\u092E\u0947\u0939', icon: '\uD83E\uDE78', color: '#10B981' },
+  { id: 'stress', label: 'Mental Stress', labelHi: '\u092E\u093E\u0928\u0938\u093F\u0915 \u0924\u0928\u093E\u0935', icon: '\uD83E\uDDE0', color: '#6B7280' },
+  { id: 'weight', label: 'Weight Issues', labelHi: '\u0935\u091C\u0928 \u0915\u0940 \u0938\u092E\u0938\u094D\u092F\u093E', icon: '\u2696\uFE0F', color: '#F59E0B' },
 ];
 
 export const PLANS = [
   {
     id: 'freemium',
     name: 'Freemium',
-    nameHi: 'à¤®à¥à¤«à¥à¤¤',
+    nameHi: '\u092E\u0941\u092B\u094D\u0924',
     price: 0,
     period: 'forever',
-    color: '#6C757D',
-    features: ['3 AI questions/day', 'Basic health tips', 'Doctor @ â‚¹199 extra'],
+    color: '#6B7280',
+    features: ['3 AI questions/day', 'Basic health tips', 'Doctor @ \u20B9199 extra'],
     consultPrice: 199,
   },
   {
     id: 'rural',
     name: 'Rural Basic',
-    nameHi: 'à¤—à¥à¤°à¤¾à¤®à¥€à¤£ à¤¬à¥‡à¤¸à¤¿à¤•',
+    nameHi: '\u0917\u094D\u0930\u093E\u092E\u0940\u0923 \u092C\u0947\u0938\u093F\u0915',
     price: 149,
     period: 'month',
-    color: '#28A745',
-    features: ['Unlimited AI chat', 'Hindi support', 'Doctor @ â‚¹199 extra'],
+    color: '#10B981',
+    features: ['Unlimited AI chat', 'Hindi support', 'Doctor @ \u20B9199 extra'],
     consultPrice: 199,
     tag: 'Rural Friendly',
   },
   {
     id: 'standard',
     name: 'Standard',
-    nameHi: 'à¤¸à¥à¤Ÿà¥ˆà¤‚à¤¡à¤°à¥à¤¡',
+    nameHi: '\u0938\u094D\u091F\u0948\u0902\u0921\u0930\u094D\u0921',
     price: 299,
     period: 'month',
-    color: '#1A73E8',
-    features: ['Unlimited AI', 'Progress tracking', 'Dashboard', 'Doctor @ â‚¹199 extra'],
+    color: '#D4A017',
+    features: ['Unlimited AI', 'Progress tracking', 'Dashboard', 'Doctor @ \u20B9199 extra'],
     consultPrice: 199,
     tag: 'Popular',
   },
   {
     id: 'care',
     name: 'Care',
-    nameHi: 'à¤•à¥‡à¤¯à¤°',
+    nameHi: '\u0915\u0947\u092F\u0930',
     price: 599,
     period: 'month',
-    color: '#FF6D00',
-    features: ['All Standard features', '1 free consultation', 'Extra @ â‚¹149'],
+    color: '#E6B422',
+    features: ['All Standard features', '1 free consultation', 'Extra @ \u20B9149'],
     consultPrice: 149,
     tag: 'Best Value',
   },
   {
     id: 'multicare',
     name: 'Multi-Care',
-    nameHi: 'à¤®à¤²à¥à¤Ÿà¥€-à¤•à¥‡à¤¯à¤°',
+    nameHi: '\u092E\u0932\u094D\u091F\u0940-\u0915\u0947\u092F\u0930',
     price: 999,
     period: 'month',
-    color: '#6F42C1',
-    features: ['All concerns covered', '2 free consultations', 'Priority support', 'Extra @ â‚¹149'],
+    color: '#B8860B',
+    features: ['All concerns covered', '2 free consultations', 'Priority support', 'Extra @ \u20B9149'],
     consultPrice: 149,
   },
   {
     id: 'annual',
     name: 'Annual Care',
-    nameHi: 'à¤µà¤¾à¤°à¥à¤·à¤¿à¤• à¤•à¥‡à¤¯à¤°',
+    nameHi: '\u0935\u093E\u0930\u094D\u0937\u093F\u0915 \u0915\u0947\u092F\u0930',
     price: 2499,
     period: 'year',
-    color: '#DC3545',
-    features: ['Standard features', 'Best annual value', 'Doctor @ â‚¹149'],
+    color: '#D4A017',
+    features: ['Standard features', 'Best annual value', 'Doctor @ \u20B9149'],
     consultPrice: 149,
     tag: 'Save 30%',
   },
 ];
 
-export const API_BASE_URL = 'https://api.healthai-india.com'; // Replace with actual API URL
+export const API_BASE_URL = 'https://api.healthai-india.com';

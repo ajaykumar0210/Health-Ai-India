@@ -7,14 +7,15 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { COLORS, GRADIENTS, FONTS } from '../../utils/constants';
-import { authAPI } from '../../utils/api';
+import { saveUserProfile } from '../../utils/firebase';
+import { auth } from '../../utils/firebase';
 import useAppStore from '../../store/useAppStore';
 
 const STEPS = ['Personal', 'Health', 'Language'];
 const GENDERS = [
-  { val: 'male', label: 'Male', icon: 'ðŸ‘¨' },
-  { val: 'female', label: 'Female', icon: 'ðŸ‘©' },
-  { val: 'other', label: 'Other', icon: 'ðŸ§‘' },
+  { val: 'male', label: 'Male', icon: '\u{1F468}' },
+  { val: 'female', label: 'Female', icon: '\u{1F469}' },
+  { val: 'other', label: 'Other', icon: '\u{1F9D1}' },
 ];
 const BLOOD_GROUPS = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
 const LANGUAGES = [
@@ -66,14 +67,17 @@ export default function ProfileSetupScreen({ navigation }) {
     setLoading(true);
     const userData = { name: name.trim(), age: parseInt(age), gender, bloodGroup, height, weight, language };
     try {
-      const res = await authAPI.setupProfile(userData);
-      const user = res.data.user;
+      const uid = auth.currentUser?.uid || route.params?.uid;
+      if (uid) {
+        await saveUserProfile(uid, userData);
+      }
+      const user = { id: uid, ...userData };
       await AsyncStorage.setItem('user_data', JSON.stringify(user));
       setUser(user);
       setLanguagePref(language);
       navigation.replace('ProblemSelect');
-    } catch {
-      const user = { id: 1, ...userData };
+    } catch (err) {
+      const user = { id: route.params?.uid, ...userData };
       await AsyncStorage.setItem('user_data', JSON.stringify(user));
       setUser(user);
       setLanguagePref(language);
@@ -85,15 +89,15 @@ export default function ProfileSetupScreen({ navigation }) {
 
   return (
     <KeyboardAvoidingView style={styles.root} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-      <StatusBar translucent backgroundColor="transparent" barStyle="light-content" />
+      <StatusBar translucent backgroundColor="transparent" barStyle="dark-content" />
 
       {/* Header */}
       <LinearGradient colors={GRADIENTS.hero} style={styles.header}>
         <TouchableOpacity style={styles.backBtn} onPress={goBack}>
-          <Ionicons name="arrow-back" size={22} color="#fff" />
+          <Ionicons name="arrow-back" size={22} color="#111827" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Create Your Profile</Text>
-        <Text style={styles.headerSub}>Step {step + 1} of {STEPS.length} â€” {STEPS[step]}</Text>
+        <Text style={styles.headerSub}>Step {step + 1} of {STEPS.length} {'\u{2014}'} {STEPS[step]}</Text>
 
         {/* Progress bar */}
         <View style={styles.progressTrack}>
@@ -109,7 +113,7 @@ export default function ProfileSetupScreen({ navigation }) {
           {STEPS.map((s, i) => (
             <View key={i} style={[styles.stepPill, i <= step && styles.stepPillActive]}>
               <Text style={[styles.stepPillText, i <= step && styles.stepPillTextActive]}>
-                {i < step ? 'âœ“' : i + 1}
+                {i < step ? '\u{2714}' : i + 1}
               </Text>
               <Text style={[styles.stepPillLabel, i <= step && styles.stepPillLabelActive]}>{s}</Text>
             </View>
@@ -160,7 +164,7 @@ export default function ProfileSetupScreen({ navigation }) {
                   <Text style={[styles.genderLabel, gender === g.val && styles.genderLabelActive]}>{g.label}</Text>
                   {gender === g.val && (
                     <View style={styles.genderCheck}>
-                      <Ionicons name="checkmark" size={12} color="#fff" />
+                      <Ionicons name="checkmark" size={12} color="#111827" />
                     </View>
                   )}
                 </TouchableOpacity>
@@ -236,7 +240,7 @@ export default function ProfileSetupScreen({ navigation }) {
                 </View>
                 {language === l.val && (
                   <View style={styles.langCheck}>
-                    <Ionicons name="checkmark" size={16} color="#fff" />
+                    <Ionicons name="checkmark" size={16} color="#111827" />
                   </View>
                 )}
               </TouchableOpacity>
@@ -251,9 +255,9 @@ export default function ProfileSetupScreen({ navigation }) {
           disabled={loading}
           activeOpacity={0.85}
         >
-          <LinearGradient colors={['#1E3A5F', '#3B82C4']} style={styles.ctaGradient} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}>
+          <LinearGradient colors={['#D4A017', '#B8860B']} style={styles.ctaGradient} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}>
             <Text style={styles.ctaText}>
-              {loading ? 'Setting up...' : step < STEPS.length - 1 ? 'Continue â†’' : 'Get Started â†’'}
+              {loading ? 'Setting up...' : step < STEPS.length - 1 ? 'Continue \u{2192}' : 'Get Started \u{2192}'}
             </Text>
           </LinearGradient>
         </TouchableOpacity>
@@ -263,30 +267,30 @@ export default function ProfileSetupScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: COLORS.white },
+  root: { flex: 1, backgroundColor: '#FFFFFF' },
   header: { paddingTop: 56, paddingBottom: 28, paddingHorizontal: 24 },
   backBtn: {
     width: 40, height: 40, borderRadius: 12,
-    backgroundColor: 'rgba(255,255,255,0.12)',
+    backgroundColor: 'rgba(0,0,0,0.05)',
     alignItems: 'center', justifyContent: 'center', marginBottom: 16,
   },
-  headerTitle: { fontFamily: FONTS.bold, fontSize: 22, color: '#fff', marginBottom: 4 },
-  headerSub: { fontFamily: FONTS.regular, fontSize: 13, color: 'rgba(255,255,255,0.6)', marginBottom: 16 },
+  headerTitle: { fontFamily: FONTS.bold, fontSize: 22, color: '#111827', marginBottom: 4 },
+  headerSub: { fontFamily: FONTS.regular, fontSize: 13, color: '#6B7280', marginBottom: 16 },
   progressTrack: { height: 4, backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: 2, marginBottom: 16 },
-  progressFill: { height: 4, backgroundColor: '#1E3A5F', borderRadius: 2 },
+  progressFill: { height: 4, backgroundColor: '#D4A017', borderRadius: 2 },
   stepPills: { flexDirection: 'row', gap: 8 },
   stepPill: {
     flexDirection: 'row', alignItems: 'center', gap: 6,
     paddingHorizontal: 12, paddingVertical: 6, borderRadius: 20,
-    backgroundColor: 'rgba(255,255,255,0.1)',
+    backgroundColor: 'rgba(0,0,0,0.04)',
   },
-  stepPillActive: { backgroundColor: 'rgba(255,92,0,0.3)' },
-  stepPillText: { fontFamily: FONTS.bold, fontSize: 11, color: 'rgba(255,255,255,0.5)' },
-  stepPillTextActive: { color: '#3B82C4' },
-  stepPillLabel: { fontFamily: FONTS.medium, fontSize: 11, color: 'rgba(255,255,255,0.5)' },
-  stepPillLabelActive: { color: '#FFDCC9' },
+  stepPillActive: { backgroundColor: 'rgba(212,160,23,0.3)' },
+  stepPillText: { fontFamily: FONTS.bold, fontSize: 11, color: '#6B7280' },
+  stepPillTextActive: { color: '#D4A017' },
+  stepPillLabel: { fontFamily: FONTS.medium, fontSize: 11, color: '#6B7280' },
+  stepPillLabelActive: { color: '#E6B422' },
 
-  body: { flex: 1, backgroundColor: COLORS.white },
+  body: { flex: 1, backgroundColor: '#F3F4F6' },
   bodyContent: { padding: 24, paddingBottom: 40 },
 
   sectionTitle: { fontFamily: FONTS.bold, fontSize: 20, color: COLORS.text, marginBottom: 6 },
@@ -296,8 +300,8 @@ const styles = StyleSheet.create({
 
   inputWrap: {
     flexDirection: 'row', alignItems: 'center',
-    borderWidth: 1.5, borderColor: COLORS.border, borderRadius: 14,
-    paddingHorizontal: 14, backgroundColor: '#FAFAFA',
+    borderWidth: 1.5, borderColor: '#E5E7EB', borderRadius: 14,
+    paddingHorizontal: 14, backgroundColor: '#FFFFFF',
   },
   inputIcon: { marginRight: 10 },
   textInput: { flex: 1, paddingVertical: 14, fontFamily: FONTS.medium, fontSize: 15, color: COLORS.text },
@@ -306,46 +310,46 @@ const styles = StyleSheet.create({
   genderRow: { flexDirection: 'row', gap: 12, marginTop: 4 },
   genderCard: {
     flex: 1, paddingVertical: 16, borderRadius: 16, alignItems: 'center',
-    borderWidth: 1.5, borderColor: COLORS.border, backgroundColor: '#FAFAFA',
+    borderWidth: 1.5, borderColor: '#E5E7EB', backgroundColor: '#FFFFFF',
     position: 'relative',
   },
-  genderCardActive: { borderColor: '#1E3A5F', backgroundColor: '#EBF2FA' },
+  genderCardActive: { borderColor: '#D4A017', backgroundColor: '#1A1A0A' },
   genderIcon: { fontSize: 28, marginBottom: 6 },
   genderLabel: { fontFamily: FONTS.semiBold, fontSize: 13, color: COLORS.textSecondary },
-  genderLabelActive: { color: '#1E3A5F' },
+  genderLabelActive: { color: '#D4A017' },
   genderCheck: {
     position: 'absolute', top: 8, right: 8,
     width: 20, height: 20, borderRadius: 10,
-    backgroundColor: '#1E3A5F', alignItems: 'center', justifyContent: 'center',
+    backgroundColor: '#D4A017', alignItems: 'center', justifyContent: 'center',
   },
 
   chipGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginTop: 4 },
   chip: {
     paddingHorizontal: 16, paddingVertical: 10, borderRadius: 20,
-    borderWidth: 1.5, borderColor: COLORS.border, backgroundColor: '#FAFAFA',
+    borderWidth: 1.5, borderColor: '#E5E7EB', backgroundColor: '#FFFFFF',
   },
-  chipActive: { borderColor: '#1E3A5F', backgroundColor: '#EBF2FA' },
+  chipActive: { borderColor: '#D4A017', backgroundColor: '#1A1A0A' },
   chipText: { fontFamily: FONTS.medium, fontSize: 14, color: COLORS.textSecondary },
-  chipTextActive: { color: '#1E3A5F', fontFamily: FONTS.semiBold },
+  chipTextActive: { color: '#D4A017', fontFamily: FONTS.semiBold },
 
   rowFields: { flexDirection: 'row' },
 
   langCard: {
     flexDirection: 'row', alignItems: 'center',
-    borderWidth: 1.5, borderColor: COLORS.border, borderRadius: 16,
-    padding: 18, marginBottom: 12, backgroundColor: '#FAFAFA',
+    borderWidth: 1.5, borderColor: '#E5E7EB', borderRadius: 16,
+    padding: 18, marginBottom: 12, backgroundColor: '#FFFFFF',
   },
-  langCardActive: { borderColor: '#1E3A5F', backgroundColor: '#EBF2FA' },
+  langCardActive: { borderColor: '#D4A017', backgroundColor: '#1A1A0A' },
   langLabel: { fontFamily: FONTS.semiBold, fontSize: 16, color: COLORS.text },
-  langLabelActive: { color: '#1E3A5F' },
+  langLabelActive: { color: '#D4A017' },
   langSub: { fontFamily: FONTS.regular, fontSize: 12, color: COLORS.textSecondary, marginTop: 2 },
   langCheck: {
-    width: 28, height: 28, borderRadius: 14, backgroundColor: '#1E3A5F',
+    width: 28, height: 28, borderRadius: 14, backgroundColor: '#D4A017',
     alignItems: 'center', justifyContent: 'center',
   },
 
   ctaBtn: { borderRadius: 14, overflow: 'hidden', marginTop: 32 },
   ctaBtnDisabled: { opacity: 0.6 },
   ctaGradient: { paddingVertical: 16, alignItems: 'center' },
-  ctaText: { fontFamily: FONTS.bold, fontSize: 16, color: '#fff' },
+  ctaText: { fontFamily: FONTS.bold, fontSize: 16, color: '#0B0B0B' },
 });

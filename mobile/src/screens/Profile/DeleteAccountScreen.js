@@ -90,8 +90,8 @@ export default function DeleteAccountScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.background },
   header: { backgroundColor: COLORS.error, padding: 20, paddingTop: 48 },
-  back: { color: '#fff', fontSize: 22, marginBottom: 8 },
-  heading: { fontSize: 22, fontWeight: 'bold', color: '#fff' },
+  back: { color: '#111827', fontSize: 22, marginBottom: 8 },
+  heading: { fontSize: 22, fontWeight: 'bold', color: '#111827' },
   warningCard: {
     backgroundColor: '#FEE8E8', margin: 16, borderRadius: 12, padding: 20, alignItems: 'center',
   },
@@ -115,5 +115,5 @@ const styles = StyleSheet.create({
     borderRadius: 12, paddingVertical: 16, alignItems: 'center',
   },
   deleteBtnDisabled: { backgroundColor: COLORS.border },
-  deleteBtnText: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
+  deleteBtnText: { color: '#111827', fontWeight: 'bold', fontSize: 16 },
 });

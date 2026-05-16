@@ -1,15 +1,5 @@
 /**
  * Firebase Configuration for Health AI India
- *
- * Setup Instructions:
- * 1. Go to https://console.firebase.google.com
- * 2. Create project "health-ai-india"
- * 3. Enable Authentication → Sign-in methods:
- *    - Phone (for SMS OTP)
- *    - Email/Password
- *    - Google
- * 4. Replace the placeholder values below with your Firebase config
- * 5. For Google Sign-In, also add SHA-1 fingerprint in Project Settings
  */
 
 import { initializeApp, getApps, getApp } from 'firebase/app';
@@ -17,10 +7,13 @@ import {
   getAuth,
   initializeAuth,
   getReactNativePersistence,
+  signInWithPhoneNumber,
+  GoogleAuthProvider,
+  signInWithCredential,
 } from 'firebase/auth';
+import { getFirestore, doc, setDoc, getDoc } from 'firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyAXU0LZ9z3C9jdDXRNPO1oXxIAG2iuzemQ",
   authDomain: "health-ai-india.firebaseapp.com",
@@ -44,5 +37,27 @@ try {
   auth = getAuth(app);
 }
 
-export { auth };
+// Firestore
+const db = getFirestore(app);
+
+// Phone Auth — pass the FirebaseRecaptchaVerifierModal ref from the component
+export async function sendOTP(phoneNumber, recaptchaVerifierRef) {
+  const confirmationResult = await signInWithPhoneNumber(auth, phoneNumber, recaptchaVerifierRef);
+  return confirmationResult;
+}
+
+// Google Auth — call signInWithCredential from the component after getting id_token via expo-auth-session
+export { GoogleAuthProvider, signInWithCredential };
+
+// Firestore user profile
+export async function saveUserProfile(uid, data) {
+  await setDoc(doc(db, 'users', uid), data, { merge: true });
+}
+
+export async function getUserProfile(uid) {
+  const snap = await getDoc(doc(db, 'users', uid));
+  return snap.exists() ? snap.data() : null;
+}
+
+export { auth, db, firebaseConfig };
 export default app;

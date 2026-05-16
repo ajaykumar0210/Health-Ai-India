@@ -9,43 +9,43 @@ import { COLORS, GRADIENTS, FONTS } from '../../utils/constants';
 
 const NOTIFICATIONS = [
   {
-    id: '1', type: 'appointment', icon: 'ðŸ‘¨â€âš•ï¸', time: '10 min ago', unread: true,
+    id: '1', type: 'appointment', icon: '👨‍⚕️', time: '10 min ago', unread: true,
     title: 'Appointment Confirmed',
     body: 'Dr. Priya Sharma confirmed your video consultation for Today at 6:00 PM.',
     action: 'Join Now',
-    gradient: ['#0D9488', '#14B8A6'],
+    gradient: ['#D4A017', '#E6B422'],
   },
   {
-    id: '2', type: 'reminder', icon: 'ðŸ’Š', time: '1 hr ago', unread: true,
+    id: '2', type: 'reminder', icon: '💊', time: '1 hr ago', unread: true,
     title: 'Medication Reminder',
-    body: 'Time to take your Minoxidil 5% â€” evening dose. Consistency = results.',
+    body: 'Time to take your Minoxidil 5% — evening dose. Consistency = results.',
     action: 'Mark Done',
-    gradient: ['#1E3A5F', '#3B82C4'],
+    gradient: ['#D4A017', '#B8860B'],
   },
   {
-    id: '3', type: 'report', icon: 'ðŸ“‹', time: '3 hrs ago', unread: false,
+    id: '3', type: 'report', icon: '📋', time: '3 hrs ago', unread: false,
     title: 'Prescription Ready',
     body: 'Dr. Rajan Mehta has added your prescription. Download your PDF now.',
     action: 'Download',
-    gradient: ['#059669', '#0D9488'],
+    gradient: ['#059669', '#D4A017'],
   },
   {
-    id: '4', type: 'ai', icon: 'ðŸ¤–', time: 'Yesterday', unread: false,
+    id: '4', type: 'ai', icon: '🤖', time: 'Yesterday', unread: false,
     title: 'AI Insight Available',
     body: 'Based on your weekly check-in, your stress levels may be contributing to hair fall.',
     action: 'View Insight',
     gradient: ['#D97706', '#F59E0B'],
   },
   {
-    id: '5', type: 'tip', icon: 'âœ¨', time: 'Yesterday', unread: false,
+    id: '5', type: 'tip', icon: '✨', time: 'Yesterday', unread: false,
     title: 'Today\'s Skin Tip',
     body: 'Apply SPF 50 sunscreen 20 minutes before stepping out. UV causes 80% of premature aging.',
     action: 'Learn More',
     gradient: ['#DB2777', '#EC4899'],
   },
   {
-    id: '6', type: 'streak', icon: 'ðŸ”¥', time: '2 days ago', unread: false,
-    title: 'You\'re on a 5-Day Streak! ðŸŽ‰',
+    id: '6', type: 'streak', icon: '🔥', time: '2 days ago', unread: false,
+    title: 'You\'re on a 5-Day Streak! 🎉',
     body: 'Amazing consistency! Keep logging your daily health data to maintain your streak.',
     action: 'View Progress',
     gradient: ['#1E1B4B', '#4338CA'],
@@ -53,8 +53,8 @@ const NOTIFICATIONS = [
 ];
 
 const TYPE_ICONS = {
-  appointment: { icon: 'calendar', color: '#0D9488' },
-  reminder: { icon: 'alarm', color: '#1E3A5F' },
+  appointment: { icon: 'calendar', color: '#D4A017' },
+  reminder: { icon: 'alarm', color: '#D4A017' },
   report: { icon: 'document-text', color: '#059669' },
   ai: { icon: 'sparkles', color: '#D97706' },
   tip: { icon: 'bulb', color: '#DB2777' },
@@ -70,11 +70,11 @@ export default function NotificationsScreen({ navigation }) {
 
   return (
     <View style={styles.root}>
-      <StatusBar translucent backgroundColor="transparent" barStyle="light-content" />
+      <StatusBar translucent backgroundColor="transparent" barStyle="dark-content" />
 
       <LinearGradient colors={GRADIENTS.hero} style={styles.header}>
         <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={22} color="#fff" />
+          <Ionicons name="arrow-back" size={22} color="#111827" />
         </TouchableOpacity>
         <View style={styles.headerRow}>
           <View>
@@ -116,7 +116,7 @@ export default function NotificationsScreen({ navigation }) {
               </View>
               <Text style={styles.cardBody} numberOfLines={2}>{item.body}</Text>
               <TouchableOpacity style={styles.actionBtn}>
-                <Text style={styles.actionText}>{item.action} â†’</Text>
+                <Text style={styles.actionText}>{item.action} →</Text>
               </TouchableOpacity>
             </View>
           </TouchableOpacity>
@@ -131,17 +131,17 @@ const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: COLORS.background },
   header: { paddingTop: 56, paddingBottom: 24, paddingHorizontal: 20 },
   backBtn: {
-    width: 40, height: 40, borderRadius: 12, backgroundColor: 'rgba(255,255,255,0.12)',
+    width: 40, height: 40, borderRadius: 12, backgroundColor: 'rgba(0,0,0,0.05)',
     alignItems: 'center', justifyContent: 'center', marginBottom: 14,
   },
   headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' },
-  headerTitle: { fontFamily: FONTS.bold, fontSize: 24, color: '#fff', marginBottom: 4 },
-  headerSub: { fontFamily: FONTS.regular, fontSize: 13, color: 'rgba(255,255,255,0.6)' },
+  headerTitle: { fontFamily: FONTS.bold, fontSize: 24, color: '#111827', marginBottom: 4 },
+  headerSub: { fontFamily: FONTS.regular, fontSize: 13, color: '#6B7280' },
   markAllBtn: {
-    backgroundColor: 'rgba(255,255,255,0.15)', borderRadius: 20,
+    backgroundColor: 'rgba(0,0,0,0.06)', borderRadius: 20,
     paddingHorizontal: 14, paddingVertical: 8, marginTop: 4,
   },
-  markAllText: { fontFamily: FONTS.medium, fontSize: 12, color: '#fff' },
+  markAllText: { fontFamily: FONTS.medium, fontSize: 12, color: '#111827' },
 
   list: { padding: 16, paddingTop: 12 },
   card: {

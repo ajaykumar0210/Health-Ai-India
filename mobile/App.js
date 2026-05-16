@@ -21,15 +21,15 @@ export default function App() {
 
   if (!fontsLoaded) {
     return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#0B1929' }}>
-        <ActivityIndicator size="large" color="#fff" />
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#FFFFFF' }}>
+        <ActivityIndicator size="large" color="#D4A017" />
       </View>
     );
   }
 
   return (
     <>
-      <StatusBar style="light" />
+      <StatusBar style="dark" />
       <AppNavigator />
     </>
   );

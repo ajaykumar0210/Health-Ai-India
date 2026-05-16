@@ -147,8 +147,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row', alignItems: 'center',
     backgroundColor: COLORS.primary, padding: 20, paddingTop: 48, gap: 16,
   },
-  back: { color: '#fff', fontSize: 22, fontWeight: 'bold' },
-  heading: { fontSize: 20, fontWeight: 'bold', color: '#fff' },
+  back: { color: '#111827', fontSize: 22, fontWeight: 'bold' },
+  heading: { fontSize: 20, fontWeight: 'bold', color: '#111827' },
   sub: { fontSize: 12, color: '#B3D4FF' },
   list: { padding: 16 },
   card: {
@@ -160,7 +160,7 @@ const styles = StyleSheet.create({
     width: 50, height: 50, borderRadius: 25,
     backgroundColor: COLORS.primary, alignItems: 'center', justifyContent: 'center',
   },
-  avatarText: { color: '#fff', fontSize: 20, fontWeight: 'bold' },
+  avatarText: { color: '#111827', fontSize: 20, fontWeight: 'bold' },
   name: { fontSize: 16, fontWeight: 'bold', color: COLORS.text },
   spec: { fontSize: 13, color: COLORS.textSecondary, marginTop: 2 },
   exp: { fontSize: 12, color: COLORS.primary, marginTop: 2 },
@@ -178,5 +178,5 @@ const styles = StyleSheet.create({
     paddingVertical: 12, alignItems: 'center',
   },
   bookBtnDisabled: { backgroundColor: COLORS.border },
-  bookBtnText: { color: '#fff', fontWeight: 'bold', fontSize: 14 },
+  bookBtnText: { color: '#111827', fontWeight: 'bold', fontSize: 14 },
 });

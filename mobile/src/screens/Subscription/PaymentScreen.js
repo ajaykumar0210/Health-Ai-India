@@ -110,7 +110,7 @@ export default function PaymentScreen({ navigation, route }) {
         disabled={loading}
       >
         {loading ? (
-          <ActivityIndicator color="#fff" />
+          <ActivityIndicator color="#111827" />
         ) : (
           <Text style={styles.payBtnText}>
             Pay ₹{Math.round(plan.price * 1.18)} — {plan.name}
@@ -130,8 +130,8 @@ export default function PaymentScreen({ navigation, route }) {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.background },
   header: { backgroundColor: COLORS.primary, padding: 20, paddingTop: 48 },
-  back: { color: 'rgba(255,255,255,0.8)', marginBottom: 8 },
-  heading: { fontSize: 24, fontWeight: 'bold', color: '#fff' },
+  back: { color: '#4B5563', marginBottom: 8 },
+  heading: { fontSize: 24, fontWeight: 'bold', color: '#111827' },
   summaryCard: {
     backgroundColor: COLORS.white, margin: 16, borderRadius: 12, padding: 16,
   },
@@ -165,7 +165,7 @@ const styles = StyleSheet.create({
     paddingVertical: 16, alignItems: 'center', marginBottom: 12,
   },
   payBtnDisabled: { opacity: 0.6 },
-  payBtnText: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
+  payBtnText: { color: '#111827', fontWeight: 'bold', fontSize: 16 },
   refundNote: {
     fontSize: 12, color: COLORS.textSecondary,
     marginHorizontal: 16, textAlign: 'center', lineHeight: 18,

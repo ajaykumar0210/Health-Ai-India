@@ -128,7 +128,7 @@ export default function BookAppointmentScreen({ navigation, route }) {
         disabled={!selectedSlot || loading}
       >
         {loading ? (
-          <ActivityIndicator color="#fff" />
+          <ActivityIndicator color="#111827" />
         ) : (
           <Text style={styles.bookBtnText}>
             Confirm Booking — ₹{doctor.price}
@@ -144,8 +144,8 @@ export default function BookAppointmentScreen({ navigation, route }) {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.background },
   header: { backgroundColor: COLORS.primary, padding: 20, paddingTop: 48 },
-  back: { color: 'rgba(255,255,255,0.8)', marginBottom: 8 },
-  heading: { fontSize: 22, fontWeight: 'bold', color: '#fff' },
+  back: { color: '#4B5563', marginBottom: 8 },
+  heading: { fontSize: 22, fontWeight: 'bold', color: '#111827' },
   doctorCard: {
     flexDirection: 'row', alignItems: 'center',
     backgroundColor: COLORS.white, margin: 16, borderRadius: 12, padding: 16, gap: 14,
@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
     width: 50, height: 50, borderRadius: 25,
     backgroundColor: COLORS.primary, alignItems: 'center', justifyContent: 'center',
   },
-  doctorAvatarText: { color: '#fff', fontSize: 20, fontWeight: 'bold' },
+  doctorAvatarText: { color: '#111827', fontSize: 20, fontWeight: 'bold' },
   doctorName: { fontSize: 16, fontWeight: 'bold', color: COLORS.text },
   doctorSpec: { fontSize: 13, color: COLORS.textSecondary },
   doctorPrice: { fontSize: 13, color: COLORS.primary, fontWeight: '600', marginTop: 2 },
@@ -167,7 +167,7 @@ const styles = StyleSheet.create({
   },
   dateCardSelected: { borderColor: COLORS.primary, backgroundColor: COLORS.primary },
   dateTxt: { fontSize: 13, fontWeight: '600', color: COLORS.text },
-  dateTxtSelected: { color: '#fff' },
+  dateTxtSelected: { color: '#111827' },
   todayLabel: { fontSize: 10, color: COLORS.primary, marginTop: 2 },
   slotsGrid: { flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: 16, gap: 10, marginBottom: 20 },
   slot: {
@@ -188,5 +188,5 @@ const styles = StyleSheet.create({
     borderRadius: 12, paddingVertical: 16, alignItems: 'center',
   },
   bookBtnDisabled: { backgroundColor: COLORS.border },
-  bookBtnText: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
+  bookBtnText: { color: '#111827', fontWeight: 'bold', fontSize: 16 },
 });

@@ -5,7 +5,7 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
-import { COLORS, GRADIENTS, FONTS } from '../../utils/constants';
+import { COLORS, FONTS } from '../../utils/constants';
 
 const { width, height } = Dimensions.get('window');
 
@@ -13,50 +13,50 @@ const SLIDES = [
   {
     id: '1',
     tag: 'HAIR CARE',
-    icon: 'ðŸ’‡â€â™‚ï¸',
+    icon: '\uD83D\uDC87\u200D\u2642\uFE0F',
     title: 'Stop Hair Fall.\nStart Growing.',
-    sub: 'Personalised treatment plans by certified trichologists & AI â€” like Traya but smarter.',
+    sub: 'Personalised treatment plans by certified trichologists & AI.',
     stats: [{ val: '93%', label: 'Success Rate' }, { val: '1M+', label: 'Treated' }, { val: '12 Wk', label: 'Results' }],
-    gradient: ['#122640', '#1E3A5F'],
-    accent: '#1E3A5F',
-    tagBg: '#1E3A5F22',
-    tagColor: '#3B82C4',
+    gradient: ['#FFFFFF', '#F9FAFB'],
+    accent: '#D4A017',
+    tagBg: 'rgba(212,160,23,0.1)',
+    tagColor: '#D4A017',
   },
   {
     id: '2',
     tag: 'SKIN HEALTH',
-    icon: 'âœ¨',
+    icon: '\u2728',
     title: 'Glow-Up with\nScience-Backed Care.',
-    sub: 'Acne, dark spots, pigmentation â€” get prescription-grade solutions from dermatologists online.',
-    stats: [{ val: '50K+', label: 'Skin Cases' }, { val: '4.8â˜…', label: 'Rating' }, { val: '48h', label: 'Consult' }],
-    gradient: ['#0F172A', '#1E1B4B'],
-    accent: '#0D9488',
-    tagBg: '#0D948822',
-    tagColor: '#14B8A6',
+    sub: 'Acne, dark spots, pigmentation \u2014 get prescription-grade solutions from dermatologists online.',
+    stats: [{ val: '50K+', label: 'Skin Cases' }, { val: '4.8\u2605', label: 'Rating' }, { val: '48h', label: 'Consult' }],
+    gradient: ['#FFFFFF', '#F9FAFB'],
+    accent: '#D4A017',
+    tagBg: 'rgba(212,160,23,0.1)',
+    tagColor: '#E6B422',
   },
   {
     id: '3',
     tag: 'AI DIAGNOSIS',
-    icon: 'ðŸ¤–',
+    icon: '\uD83E\uDD16',
     title: 'AI That Speaks\nHindi & English.',
     sub: 'Describe symptoms in Hindi or English. Get instant root cause analysis, not just generic tips.',
-    stats: [{ val: '500+', label: 'Conditions' }, { val: '24/7', label: 'Available' }, { val: 'ðŸ”’', label: 'Private' }],
-    gradient: ['#0F2027', '#203A43', '#2C5364'],
-    accent: '#0D9488',
-    tagBg: '#0D948822',
-    tagColor: '#2DD4BF',
+    stats: [{ val: '500+', label: 'Conditions' }, { val: '24/7', label: 'Available' }, { val: '\uD83D\uDD12', label: 'Private' }],
+    gradient: ['#FFFFFF', '#F9FAFB'],
+    accent: '#D4A017',
+    tagBg: 'rgba(212,160,23,0.1)',
+    tagColor: '#D4A017',
   },
   {
     id: '4',
     tag: 'CERTIFIED DOCTORS',
-    icon: 'ðŸ‘¨â€âš•ï¸',
+    icon: '\uD83D\uDC68\u200D\u2695\uFE0F',
     title: 'Real Doctors.\nReal Prescriptions.',
-    sub: 'Video consult with MBBS/MD specialists. Get real prescription PDFs. Starting at just â‚¹149.',
-    stats: [{ val: 'â‚¹149', label: 'Starting' }, { val: '200+', label: 'Doctors' }, { val: 'PDF', label: 'Prescription' }],
-    gradient: ['#122640', '#16213E'],
-    accent: '#1E3A5F',
-    tagBg: '#1E3A5F22',
-    tagColor: '#3B82C4',
+    sub: 'Video consult with MBBS/MD specialists. Get real prescription PDFs. Starting at just \u20B9149.',
+    stats: [{ val: '\u20B9149', label: 'Starting' }, { val: '200+', label: 'Doctors' }, { val: 'PDF', label: 'Prescription' }],
+    gradient: ['#FFFFFF', '#F9FAFB'],
+    accent: '#D4A017',
+    tagBg: 'rgba(212,160,23,0.1)',
+    tagColor: '#E6B422',
   },
 ];
 
@@ -67,7 +67,17 @@ export default function OnboardingScreen({ navigation }) {
 
   const handleNext = () => {
     if (currentIndex < SLIDES.length - 1) {
-      flatListRef.current?.scrollToIndex({ index: currentIndex + 1, animated: true });
+      const nextIndex = currentIndex + 1;
+      // Update state first (works on web)
+      setCurrentIndex(nextIndex);
+      // Animate dot indicator manually (works on web + native)
+      Animated.timing(scrollX, {
+        toValue: nextIndex * width,
+        duration: 300,
+        useNativeDriver: false,
+      }).start();
+      // Also try FlatList scroll (works on native)
+      flatListRef.current?.scrollToIndex({ index: nextIndex, animated: true });
     } else {
       navigation.replace('Login');
     }
@@ -75,27 +85,20 @@ export default function OnboardingScreen({ navigation }) {
 
   const renderSlide = ({ item }) => (
     <LinearGradient colors={item.gradient} style={styles.slide} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
-      {/* Decorative circle */}
       <View style={[styles.decoCircle, { borderColor: item.accent + '20' }]} />
       <View style={[styles.decoCircle2, { borderColor: item.accent + '10' }]} />
 
-      {/* Top tag */}
-      <View style={[styles.tagPill, { backgroundColor: item.tagBg }]}>
+      <View style={[styles.tagPill, { backgroundColor: item.tagBg }]}>  
         <Text style={[styles.tagText, { color: item.tagColor }]}>{item.tag}</Text>
       </View>
 
-      {/* Main icon */}
       <View style={[styles.iconWrap, { borderColor: item.accent + '40', shadowColor: item.accent }]}>
         <Text style={styles.slideIcon}>{item.icon}</Text>
       </View>
 
-      {/* Title */}
       <Text style={styles.slideTitle}>{item.title}</Text>
-
-      {/* Subtitle */}
       <Text style={styles.slideSub}>{item.sub}</Text>
 
-      {/* Stats row */}
       <View style={styles.statsRow}>
         {item.stats.map((s, i) => (
           <View key={i} style={[styles.statCard, { borderColor: item.accent + '30' }]}>
@@ -109,16 +112,22 @@ export default function OnboardingScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <StatusBar translucent backgroundColor="transparent" barStyle="light-content" />
+      <StatusBar translucent backgroundColor="transparent" barStyle="dark-content" />
 
+      {/* Render current slide directly — works on web + native */}
+      {renderSlide({ item: SLIDES[currentIndex] })}
+
+      {/* Hidden FlatList just to support swipe gestures on native */}
       <Animated.FlatList
         ref={flatListRef}
         data={SLIDES}
-        renderItem={renderSlide}
+        renderItem={() => <View style={{ width, height }} />}
         keyExtractor={(item) => item.id}
         horizontal
         pagingEnabled
         showsHorizontalScrollIndicator={false}
+        getItemLayout={(_, index) => ({ length: width, offset: width * index, index })}
+        style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, opacity: 0 }}
         onScroll={Animated.event(
           [{ nativeEvent: { contentOffset: { x: scrollX } } }],
           { useNativeDriver: false }
@@ -129,9 +138,7 @@ export default function OnboardingScreen({ navigation }) {
         scrollEventThrottle={16}
       />
 
-      {/* Bottom bar */}
       <View style={styles.bottomBar}>
-        {/* Dots */}
         <View style={styles.dots}>
           {SLIDES.map((s, i) => {
             const inputRange = [(i - 1) * width, i * width, (i + 1) * width];
@@ -140,24 +147,22 @@ export default function OnboardingScreen({ navigation }) {
             return (
               <Animated.View
                 key={i}
-                style={[styles.dot, { width: dotWidth, opacity, backgroundColor: SLIDES[currentIndex].accent }]}
+                style={[styles.dot, { width: dotWidth, opacity, backgroundColor: '#D4A017' }]}
               />
             );
           })}
         </View>
 
-        {/* Skip */}
         <TouchableOpacity style={styles.skipBtn} onPress={() => navigation.replace('Login')}>
           <Text style={styles.skipText}>Skip</Text>
         </TouchableOpacity>
 
-        {/* Next / Get Started */}
         <TouchableOpacity onPress={handleNext} activeOpacity={0.85}>
-          <LinearGradient colors={['#1E3A5F', '#3B82C4']} style={styles.nextBtn} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}>
+          <LinearGradient colors={['#D4A017', '#B8860B']} style={styles.nextBtn} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}>
             <Text style={styles.nextText}>
               {currentIndex === SLIDES.length - 1 ? 'Get Started' : 'Next'}
             </Text>
-            <Ionicons name="arrow-forward" size={18} color="#fff" style={{ marginLeft: 6 }} />
+            <Ionicons name="arrow-forward" size={18} color="#0B0B0B" style={{ marginLeft: 6 }} />
           </LinearGradient>
         </TouchableOpacity>
       </View>
@@ -166,7 +171,7 @@ export default function OnboardingScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0B1929' },
+  container: { flex: 1, backgroundColor: '#FFFFFF' },
   slide: {
     width, height, paddingTop: 80, paddingHorizontal: 28,
     alignItems: 'flex-start', justifyContent: 'center',
@@ -187,44 +192,40 @@ const styles = StyleSheet.create({
   iconWrap: {
     width: 96, height: 96, borderRadius: 28, borderWidth: 1,
     alignItems: 'center', justifyContent: 'center',
-    backgroundColor: 'rgba(255,255,255,0.06)',
+    backgroundColor: 'rgba(212,160,23,0.06)',
     marginBottom: 28,
     shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.4, shadowRadius: 16, elevation: 10,
   },
   slideIcon: { fontSize: 44 },
   slideTitle: {
-    fontFamily: FONTS.bold, fontSize: 34, color: '#FFFFFF',
+    fontFamily: FONTS.bold, fontSize: 34, color: '#111827',
     lineHeight: 42, marginBottom: 16,
   },
   slideSub: {
-    fontFamily: FONTS.regular, fontSize: 15, color: 'rgba(255,255,255,0.65)',
-    lineHeight: 24, marginBottom: 36,
+    fontFamily: FONTS.regular, fontSize: 15, color: '#6B7280',
+    lineHeight: 24, marginBottom: 32, maxWidth: '90%',
   },
   statsRow: { flexDirection: 'row', gap: 12 },
   statCard: {
-    flex: 1, borderWidth: 1, borderRadius: 16,
-    paddingVertical: 14, alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.05)',
+    backgroundColor: 'rgba(31,41,55,0.5)', borderRadius: 14,
+    paddingHorizontal: 16, paddingVertical: 12, borderWidth: 1,
+    alignItems: 'center', minWidth: 80,
   },
-  statVal: { fontFamily: FONTS.bold, fontSize: 20 },
-  statLabel: { fontFamily: FONTS.regular, fontSize: 11, color: 'rgba(255,255,255,0.5)', marginTop: 2 },
-
+  statVal: { fontFamily: FONTS.bold, fontSize: 16, marginBottom: 2 },
+  statLabel: { fontFamily: FONTS.regular, fontSize: 11, color: '#6B7280' },
   bottomBar: {
     position: 'absolute', bottom: 0, left: 0, right: 0,
-    paddingBottom: 36, paddingHorizontal: 28, paddingTop: 20,
-    backgroundColor: 'rgba(15,14,23,0.95)',
-    borderTopWidth: 1, borderTopColor: 'rgba(255,255,255,0.06)',
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+    paddingHorizontal: 24, paddingBottom: 40, paddingTop: 20,
+    backgroundColor: 'rgba(11,11,11,0.9)',
+    flexDirection: 'row', alignItems: 'center',
   },
-  dots: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  dot: { height: 8, borderRadius: 4 },
-  skipBtn: { padding: 8 },
-  skipText: { fontFamily: FONTS.medium, fontSize: 14, color: 'rgba(255,255,255,0.45)' },
+  dots: { flexDirection: 'row', gap: 6, flex: 1 },
+  dot: { height: 4, borderRadius: 2 },
+  skipBtn: { marginRight: 16 },
+  skipText: { fontFamily: FONTS.medium, fontSize: 14, color: '#6B7280' },
   nextBtn: {
     flexDirection: 'row', alignItems: 'center',
-    borderRadius: 30, paddingHorizontal: 24, paddingVertical: 14,
-    shadowColor: '#1E3A5F', shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.45, shadowRadius: 12, elevation: 8,
+    paddingHorizontal: 24, paddingVertical: 14, borderRadius: 14,
   },
-  nextText: { fontFamily: FONTS.bold, fontSize: 15, color: '#FFFFFF' },
+  nextText: { fontFamily: FONTS.bold, fontSize: 15, color: '#0B0B0B' },
 });

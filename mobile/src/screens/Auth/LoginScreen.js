@@ -1,32 +1,31 @@
-﻿import React, { useState } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import {
   View, Text, StyleSheet, TextInput, TouchableOpacity,
   KeyboardAvoidingView, Platform, ScrollView, StatusBar,
-  Dimensions, Alert,
+  Dimensions, Alert, ActivityIndicator,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
-import * as WebBrowser from 'expo-web-browser';
-import * as Google from 'expo-auth-session/providers/google';
-import { makeRedirectUri } from 'expo-auth-session';
-import { signInWithPhoneNumber, signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { FirebaseRecaptchaVerifierModal } from 'expo-firebase-recaptcha';
+import * as Google from 'expo-auth-session/providers/google';
 import { COLORS, GRADIENTS, FONTS } from '../../utils/constants';
+import { sendOTP, getUserProfile, GoogleAuthProvider, signInWithCredential, firebaseConfig } from '../../utils/firebase';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../utils/firebase';
-import { setPhoneConfirmation } from '../../utils/authState';
 import useAppStore from '../../store/useAppStore';
 
-WebBrowser.maybeCompleteAuthSession();
+const WEB_CLIENT_ID = '738075468552-dj2533tteuu573e28cqbdnmmf9ca76nm.apps.googleusercontent.com';
 
 const { height } = Dimensions.get('window');
 
 const CATEGORIES = [
-  { icon: '💇', label: 'Hair Care' },
-  { icon: '✨', label: 'Skin & Acne' },
-  { icon: '🥗', label: 'Nutrition' },
-  { icon: '💊', label: 'Wellness' },
-  { icon: '🧬', label: 'Hormones' },
-  { icon: '🧘', label: 'Stress' },
+  { icon: '\uD83D\uDC87', label: 'Hair Care' },
+  { icon: '\u2728', label: 'Skin & Acne' },
+  { icon: '\uD83E\uDD57', label: 'Nutrition' },
+  { icon: '\uD83D\uDC8A', label: 'Wellness' },
+  { icon: '\uD83E\uDDEC', label: 'Hormones' },
+  { icon: '\uD83E\uDDD8', label: 'Stress' },
 ];
 
 export default function LoginScreen({ navigation }) {
@@ -40,20 +39,38 @@ export default function LoginScreen({ navigation }) {
   const [loading, setLoading] = useState(false);
   const setUser = useAppStore((s) => s.setUser);
   const setToken = useAppStore((s) => s.setToken);
+  const recaptchaVerifier = useRef(null);
 
-  const [, googleResponse, promptGoogleAsync] = Google.useAuthRequest({
-    clientId: '738075468552-dj2533tteuu573e28cqbdnmmf9ca76nm.apps.googleusercontent.com',
-    iosClientId: '738075468552-dj2533tteuu573e28cqbdnmmf9ca76nm.apps.googleusercontent.com',
-    androidClientId: '738075468552-dj2533tteuu573e28cqbdnmmf9ca76nm.apps.googleusercontent.com',
-    webClientId: '738075468552-dj2533tteuu573e28cqbdnmmf9ca76nm.apps.googleusercontent.com',
-    redirectUri: makeRedirectUri({ useProxy: true }),
-  });
+  // Google Sign-In via expo-auth-session
+  const [request, response, promptAsync] = Google.useAuthRequest({ webClientId: WEB_CLIENT_ID });
 
-  React.useEffect(() => {
-    if (googleResponse?.type === 'success') {
-      navigation.navigate('ProfileSetup', { googleToken: googleResponse.authentication?.accessToken });
+  useEffect(() => {
+    if (response?.type === 'success') {
+      const { id_token } = response.params;
+      setLoading(true);
+      const credential = GoogleAuthProvider.credential(id_token);
+      signInWithCredential(auth, credential)
+        .then(async (result) => {
+          const fbUser = result.user;
+          const token = await fbUser.getIdToken();
+          const profile = await getUserProfile(fbUser.uid);
+          const userData = { id: fbUser.uid, email: fbUser.email, name: profile?.name || fbUser.displayName, photo: fbUser.photoURL, ...profile };
+          await AsyncStorage.setItem('auth_token', token);
+          await AsyncStorage.setItem('user_data', JSON.stringify(userData));
+          setToken(token);
+          setUser(userData);
+          if (profile?.name) {
+            navigation.replace('MainTabs');
+          } else {
+            navigation.navigate('ProfileSetup', { uid: fbUser.uid, email: fbUser.email });
+          }
+        })
+        .catch((err) => Alert.alert('Google Sign-In Error', err.message || 'Failed to sign in with Google.'))
+        .finally(() => setLoading(false));
+    } else if (response?.type === 'error') {
+      Alert.alert('Google Sign-In Error', response.error?.message || 'Sign-in was cancelled or failed.');
     }
-  }, [googleResponse]);
+  }, [response]);
 
   const handleSendOTP = async () => {
     const cleaned = phone.replace(/\D/g, '');
@@ -63,65 +80,77 @@ export default function LoginScreen({ navigation }) {
     }
     setLoading(true);
     try {
-      if (Platform.OS !== 'web') {
-        const confirmation = await signInWithPhoneNumber(auth, '+91' + cleaned);
-        setPhoneConfirmation(confirmation);
-      }
-    } catch (_) {
-      // Firebase not configured yet — dev fallback (OTP: 123456)
-    } finally {
+      const confirmationResult = await sendOTP('+91' + cleaned, recaptchaVerifier.current);
       setLoading(false);
+      navigation.navigate('OTPVerify', { phone: '+91' + cleaned, confirmationResult });
+    } catch (err) {
+      setLoading(false);
+      Alert.alert('Error', err.message || 'Failed to send OTP. Please try again.');
     }
-    navigation.navigate('OTPVerify', { phone: '+91' + cleaned });
   };
 
   const handleEmailAuth = async () => {
     if (!email.trim() || !password) { Alert.alert('Required', 'Enter your email and password.'); return; }
     if (mode === 'signup' && !name.trim()) { Alert.alert('Required', 'Enter your full name.'); return; }
+    if (password.length < 8) { Alert.alert('Weak Password', 'Password must be at least 8 characters.'); return; }
     setLoading(true);
     try {
+      let userCredential;
       if (mode === 'login') {
-        const cred = await signInWithEmailAndPassword(auth, email.trim(), password);
-        const token = await cred.user.getIdToken();
-        await AsyncStorage.setItem('auth_token', token);
-        setToken(token);
-        setUser({ id: cred.user.uid, email: cred.user.email, name: cred.user.displayName || '' });
+        userCredential = await signInWithEmailAndPassword(auth, email.trim(), password);
+      } else {
+        userCredential = await createUserWithEmailAndPassword(auth, email.trim(), password);
+      }
+      const fbUser = userCredential.user;
+      const token = await fbUser.getIdToken();
+      const profile = await getUserProfile(fbUser.uid);
+      const userData = { id: fbUser.uid, email: fbUser.email, name: profile?.name || name.trim() || fbUser.displayName, ...profile };
+      await AsyncStorage.setItem('auth_token', token);
+      await AsyncStorage.setItem('user_data', JSON.stringify(userData));
+      setToken(token);
+      setUser(userData);
+      if (profile?.name) {
         navigation.replace('MainTabs');
       } else {
-        const cred = await createUserWithEmailAndPassword(auth, email.trim(), password);
-        navigation.navigate('ProfileSetup', { uid: cred.user.uid, email: email.trim() });
+        navigation.navigate('ProfileSetup', { uid: fbUser.uid, email: fbUser.email });
       }
     } catch (err) {
-      const msg = err.code === 'auth/wrong-password' || err.code === 'auth/user-not-found'
-        ? 'Incorrect email or password.'
-        : err.code === 'auth/email-already-in-use'
-          ? 'This email is already registered. Try logging in.'
-          : err.code === 'auth/weak-password'
-            ? 'Password must be at least 6 characters.'
-            : null;
-      if (msg) { Alert.alert('Auth Error', msg); }
-      else { navigation.navigate(mode === 'login' ? 'MainTabs' : 'ProfileSetup'); }
+      const msg = err.code === 'auth/user-not-found' ? 'No account found with this email.'
+        : err.code === 'auth/wrong-password' ? 'Incorrect password.'
+        : err.code === 'auth/email-already-in-use' ? 'An account with this email already exists.'
+        : err.message || 'Something went wrong.';
+      Alert.alert('Auth Error', msg);
     } finally {
       setLoading(false);
     }
   };
 
+  const handleGoogleSignIn = () => {
+    promptAsync();
+  };
+
   return (
     <View style={styles.root}>
-      <StatusBar translucent backgroundColor="transparent" barStyle="light-content" />
+      <StatusBar translucent backgroundColor="transparent" barStyle="dark-content" />
+      {/* Native reCAPTCHA modal for Firebase Phone Auth */}
+      <FirebaseRecaptchaVerifierModal
+        ref={recaptchaVerifier}
+        firebaseConfig={firebaseConfig}
+        attemptInvisibleVerification
+      />
 
       <LinearGradient
-        colors={['#0B1929', '#122640', '#1E3A5F']}
+        colors={['#FFFFFF', '#F9FAFB', '#FFFFFF']}
         style={styles.hero}
         start={{ x: 0.2, y: 0 }}
         end={{ x: 0.8, y: 1 }}
       >
-        <View style={[styles.orb, { width: 220, height: 220, backgroundColor: '#0D9488', top: -80, right: -70, opacity: 0.18 }]} />
-        <View style={[styles.orb, { width: 160, height: 160, backgroundColor: '#1E3A5F', bottom: -20, left: -50, opacity: 0.15 }]} />
-        <View style={[styles.orb, { width: 100, height: 100, backgroundColor: '#14B8A6', top: 30, left: 20, opacity: 0.10 }]} />
+        <View style={[styles.orb, { width: 220, height: 220, backgroundColor: '#D4A017', top: -80, right: -70, opacity: 0.08 }]} />
+        <View style={[styles.orb, { width: 160, height: 160, backgroundColor: '#F3F4F6', bottom: -20, left: -50, opacity: 0.15 }]} />
+        <View style={[styles.orb, { width: 100, height: 100, backgroundColor: '#D4A017', top: 30, left: 20, opacity: 0.05 }]} />
 
-        <LinearGradient colors={['#1E3A5F', '#3B82C4']} style={styles.logoBox}>
-          <Text style={styles.logoEmoji}>⚕️</Text>
+        <LinearGradient colors={['#D4A017', '#B8860B']} style={styles.logoBox}>
+          <Text style={styles.logoEmoji}>{'\u2695\uFE0F'}</Text>
         </LinearGradient>
 
         <Text style={styles.brandName}>Health AI India</Text>
@@ -139,11 +168,11 @@ export default function LoginScreen({ navigation }) {
         <View style={styles.statsStrip}>
           <View style={styles.statItem}><Text style={styles.statVal}>10M+</Text><Text style={styles.statLbl}>Users</Text></View>
           <View style={styles.statDiv} />
-          <View style={styles.statItem}><Text style={styles.statVal}>4.9 ★</Text><Text style={styles.statLbl}>Rating</Text></View>
+          <View style={styles.statItem}><Text style={styles.statVal}>4.9 {'\u2605'}</Text><Text style={styles.statLbl}>Rating</Text></View>
           <View style={styles.statDiv} />
           <View style={styles.statItem}><Text style={styles.statVal}>NABH</Text><Text style={styles.statLbl}>Certified</Text></View>
           <View style={styles.statDiv} />
-          <View style={styles.statItem}><Text style={styles.statVal}>🇮🇳</Text><Text style={styles.statLbl}>Made in India</Text></View>
+          <View style={styles.statItem}><Text style={styles.statVal}>{'\uD83C\uDDEE\uD83C\uDDF3'}</Text><Text style={styles.statLbl}>Made in India</Text></View>
         </View>
       </LinearGradient>
 
@@ -153,11 +182,11 @@ export default function LoginScreen({ navigation }) {
 
           <View style={styles.tabs}>
             <TouchableOpacity style={[styles.tabBtn, tab === 'phone' && styles.tabBtnActive]} onPress={() => setTab('phone')}>
-              <Ionicons name="phone-portrait-outline" size={15} color={tab === 'phone' ? COLORS.primary : COLORS.textSecondary} />
+              <Ionicons name="phone-portrait-outline" size={15} color={tab === 'phone' ? '#D4A017' : '#9CA3AF'} />
               <Text style={[styles.tabTxt, tab === 'phone' && styles.tabTxtActive]}> Phone</Text>
             </TouchableOpacity>
             <TouchableOpacity style={[styles.tabBtn, tab === 'email' && styles.tabBtnActive]} onPress={() => setTab('email')}>
-              <Ionicons name="mail-outline" size={15} color={tab === 'email' ? COLORS.primary : COLORS.textSecondary} />
+              <Ionicons name="mail-outline" size={15} color={tab === 'email' ? '#D4A017' : '#9CA3AF'} />
               <Text style={[styles.tabTxt, tab === 'email' && styles.tabTxtActive]}> Email</Text>
             </TouchableOpacity>
           </View>
@@ -167,13 +196,13 @@ export default function LoginScreen({ navigation }) {
               <Text style={styles.fieldLbl}>Mobile Number</Text>
               <View style={styles.phoneRow}>
                 <View style={styles.countryPill}>
-                  <Text style={styles.flagTxt}>🇮🇳</Text>
+                  <Text style={styles.flagTxt}>{'\uD83C\uDDEE\uD83C\uDDF3'}</Text>
                   <Text style={styles.dialCode}>+91</Text>
                 </View>
                 <TextInput
                   style={styles.phoneInput}
                   placeholder="98765 43210"
-                  placeholderTextColor="#C0C0C0"
+                  placeholderTextColor="#6B7280"
                   keyboardType="phone-pad"
                   maxLength={10}
                   value={phone}
@@ -181,12 +210,16 @@ export default function LoginScreen({ navigation }) {
                 />
               </View>
               <View style={styles.hintRow}>
-                <Ionicons name="information-circle-outline" size={14} color={COLORS.textSecondary} />
+                <Ionicons name="information-circle-outline" size={14} color="#9CA3AF" />
                 <Text style={styles.hintTxt}>  A 6-digit OTP will be sent to your mobile number</Text>
               </View>
               <TouchableOpacity style={[styles.ctaBtn, loading && styles.ctaDisabled]} onPress={handleSendOTP} disabled={loading} activeOpacity={0.88}>
-                <LinearGradient colors={['#1E3A5F', '#3B82C4']} style={styles.ctaGrad} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}>
-                  <Text style={styles.ctaTxt}>{loading ? 'Sending OTP...' : 'Send OTP  →'}</Text>
+                <LinearGradient colors={['#D4A017', '#B8860B']} style={styles.ctaGrad} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}>
+                  {loading ? (
+                    <ActivityIndicator color="#0B0B0B" size="small" />
+                  ) : (
+                    <Text style={styles.ctaTxt}>Send OTP  {'\u2192'}</Text>
+                  )}
                 </LinearGradient>
               </TouchableOpacity>
             </>
@@ -204,27 +237,31 @@ export default function LoginScreen({ navigation }) {
 
               {mode === 'signup' && (
                 <View style={styles.inputBox}>
-                  <Ionicons name="person-outline" size={18} color={COLORS.textSecondary} style={styles.inputIco} />
-                  <TextInput style={styles.inputField} placeholder="Full Name" placeholderTextColor="#C0C0C0" value={name} onChangeText={setName} />
+                  <Ionicons name="person-outline" size={18} color="#9CA3AF" style={styles.inputIco} />
+                  <TextInput style={styles.inputField} placeholder="Full Name" placeholderTextColor="#6B7280" value={name} onChangeText={setName} />
                 </View>
               )}
 
               <View style={styles.inputBox}>
-                <Ionicons name="mail-outline" size={18} color={COLORS.textSecondary} style={styles.inputIco} />
-                <TextInput style={styles.inputField} placeholder="Email Address" placeholderTextColor="#C0C0C0" keyboardType="email-address" autoCapitalize="none" value={email} onChangeText={setEmail} />
+                <Ionicons name="mail-outline" size={18} color="#9CA3AF" style={styles.inputIco} />
+                <TextInput style={styles.inputField} placeholder="Email Address" placeholderTextColor="#6B7280" keyboardType="email-address" autoCapitalize="none" value={email} onChangeText={setEmail} />
               </View>
 
               <View style={styles.inputBox}>
-                <Ionicons name="lock-closed-outline" size={18} color={COLORS.textSecondary} style={styles.inputIco} />
-                <TextInput style={[styles.inputField, { flex: 1 }]} placeholder="Password (min. 8 characters)" placeholderTextColor="#C0C0C0" secureTextEntry={!showPass} value={password} onChangeText={setPassword} />
+                <Ionicons name="lock-closed-outline" size={18} color="#9CA3AF" style={styles.inputIco} />
+                <TextInput style={[styles.inputField, { flex: 1 }]} placeholder="Password (min. 8 characters)" placeholderTextColor="#6B7280" secureTextEntry={!showPass} value={password} onChangeText={setPassword} />
                 <TouchableOpacity onPress={() => setShowPass(!showPass)} style={{ padding: 4 }}>
-                  <Ionicons name={showPass ? 'eye-off-outline' : 'eye-outline'} size={20} color={COLORS.textSecondary} />
+                  <Ionicons name={showPass ? 'eye-off-outline' : 'eye-outline'} size={20} color="#9CA3AF" />
                 </TouchableOpacity>
               </View>
 
               <TouchableOpacity style={[styles.ctaBtn, loading && styles.ctaDisabled]} onPress={handleEmailAuth} disabled={loading} activeOpacity={0.88}>
-                <LinearGradient colors={['#1E3A5F', '#3B82C4']} style={styles.ctaGrad} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}>
-                  <Text style={styles.ctaTxt}>{loading ? 'Please wait...' : mode === 'login' ? 'Login  →' : 'Create Account  →'}</Text>
+                <LinearGradient colors={['#D4A017', '#B8860B']} style={styles.ctaGrad} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}>
+                  {loading ? (
+                    <ActivityIndicator color="#0B0B0B" size="small" />
+                  ) : (
+                    <Text style={styles.ctaTxt}>{mode === 'login' ? 'Login  \u2192' : 'Create Account  \u2192'}</Text>
+                  )}
                 </LinearGradient>
               </TouchableOpacity>
             </>
@@ -236,14 +273,14 @@ export default function LoginScreen({ navigation }) {
             <View style={styles.divLine} />
           </View>
 
-          <TouchableOpacity style={styles.googleBtn} onPress={() => promptGoogleAsync()} activeOpacity={0.88}>
+          <TouchableOpacity style={styles.googleBtn} activeOpacity={0.88} onPress={handleGoogleSignIn}>
             <View style={styles.gBadge}><Text style={styles.gLetter}>G</Text></View>
             <Text style={styles.googleTxt}>Continue with Google</Text>
           </TouchableOpacity>
 
           <Text style={styles.privacy}>
             By continuing, you agree to our <Text style={styles.privacyLink}>Terms</Text> and <Text style={styles.privacyLink}>Privacy Policy</Text>.{'\n'}
-            🔒 Your data stays in India. DPDP Act 2023 compliant.
+            {'\uD83D\uDD12'} Your data stays in India. DPDP Act 2023 compliant.
           </Text>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -252,75 +289,75 @@ export default function LoginScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: '#0B1929' },
+  root: { flex: 1, backgroundColor: '#FFFFFF' },
   hero: { paddingTop: 56, paddingBottom: 24, alignItems: 'center', overflow: 'hidden', minHeight: height * 0.46 },
   orb: { position: 'absolute', borderRadius: 999 },
   logoBox: {
     width: 80, height: 80, borderRadius: 24,
     alignItems: 'center', justifyContent: 'center', marginBottom: 14,
-    shadowColor: '#1E3A5F', shadowOffset: { width: 0, height: 12 }, shadowOpacity: 0.65, shadowRadius: 24, elevation: 18,
+    shadowColor: '#D4A017', shadowOffset: { width: 0, height: 12 }, shadowOpacity: 0.5, shadowRadius: 24, elevation: 18,
   },
   logoEmoji: { fontSize: 38 },
-  brandName: { fontFamily: FONTS.bold, fontSize: 30, color: '#FFFFFF', marginBottom: 5 },
-  brandSub: { fontFamily: FONTS.regular, fontSize: 13, color: 'rgba(255,255,255,0.5)', marginBottom: 20 },
+  brandName: { fontFamily: FONTS.bold, fontSize: 30, color: '#111827', marginBottom: 5 },
+  brandSub: { fontFamily: FONTS.regular, fontSize: 13, color: '#6B7280', marginBottom: 20 },
   chipsScroll: { flexGrow: 0, marginBottom: 18 },
   chipsContent: { paddingHorizontal: 16, gap: 8 },
   chip: {
     flexDirection: 'row', alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: 24,
+    backgroundColor: 'rgba(212,160,23,0.08)', borderRadius: 24,
     paddingHorizontal: 14, paddingVertical: 8,
-    borderWidth: 1, borderColor: 'rgba(255,255,255,0.15)',
+    borderWidth: 1, borderColor: 'rgba(212,160,23,0.2)',
   },
   chipIcon: { fontSize: 14 },
-  chipLabel: { fontFamily: FONTS.medium, fontSize: 12, color: '#FFFFFF', marginLeft: 5 },
+  chipLabel: { fontFamily: FONTS.medium, fontSize: 12, color: '#111827', marginLeft: 5 },
   statsStrip: {
     flexDirection: 'row', alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.07)', borderRadius: 18,
-    paddingVertical: 10, borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)', marginHorizontal: 20,
+    backgroundColor: 'rgba(212,160,23,0.08)', borderRadius: 18,
+    paddingVertical: 10, borderWidth: 1, borderColor: 'rgba(212,160,23,0.2)', marginHorizontal: 20,
   },
   statItem: { alignItems: 'center', flex: 1 },
-  statVal: { fontFamily: FONTS.bold, fontSize: 14, color: '#3B82C4' },
-  statLbl: { fontFamily: FONTS.regular, fontSize: 10, color: 'rgba(255,255,255,0.45)', marginTop: 2 },
-  statDiv: { width: 1, height: 28, backgroundColor: 'rgba(255,255,255,0.18)' },
+  statVal: { fontFamily: FONTS.bold, fontSize: 14, color: '#D4A017' },
+  statLbl: { fontFamily: FONTS.regular, fontSize: 10, color: '#6B7280', marginTop: 2 },
+  statDiv: { width: 1, height: 28, backgroundColor: 'rgba(0,0,0,0.04)' },
   cardWrap: { flex: 1, marginTop: -24 },
-  card: { backgroundColor: '#FFFFFF', borderTopLeftRadius: 28, borderTopRightRadius: 28, paddingHorizontal: 22, paddingTop: 30, paddingBottom: 40 },
-  cardTitle: { fontFamily: FONTS.bold, fontSize: 21, color: COLORS.text, marginBottom: 22, textAlign: 'center' },
-  tabs: { flexDirection: 'row', backgroundColor: '#F2F3F5', borderRadius: 14, padding: 4, marginBottom: 22 },
+  card: { backgroundColor: '#F3F4F6', borderTopLeftRadius: 28, borderTopRightRadius: 28, paddingHorizontal: 22, paddingTop: 30, paddingBottom: 40 },
+  cardTitle: { fontFamily: FONTS.bold, fontSize: 21, color: '#111827', marginBottom: 22, textAlign: 'center' },
+  tabs: { flexDirection: 'row', backgroundColor: '#FFFFFF', borderRadius: 14, padding: 4, marginBottom: 22 },
   tabBtn: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 11, borderRadius: 11 },
-  tabBtnActive: { backgroundColor: '#FFFFFF', shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.09, shadowRadius: 6, elevation: 3 },
-  tabTxt: { fontFamily: FONTS.medium, fontSize: 14, color: COLORS.textSecondary },
-  tabTxtActive: { fontFamily: FONTS.semiBold, color: COLORS.primary },
-  fieldLbl: { fontFamily: FONTS.semiBold, fontSize: 13, color: COLORS.text, marginBottom: 9 },
-  phoneRow: { flexDirection: 'row', borderWidth: 2, borderColor: '#EBEBEB', borderRadius: 14, overflow: 'hidden', marginBottom: 8 },
-  countryPill: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#F6F7F9', paddingHorizontal: 14, borderRightWidth: 2, borderRightColor: '#EBEBEB' },
+  tabBtnActive: { backgroundColor: '#F3F4F6', shadowColor: '#D4A017', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.2, shadowRadius: 6, elevation: 3 },
+  tabTxt: { fontFamily: FONTS.medium, fontSize: 14, color: '#6B7280' },
+  tabTxtActive: { fontFamily: FONTS.semiBold, color: '#D4A017' },
+  fieldLbl: { fontFamily: FONTS.semiBold, fontSize: 13, color: '#111827', marginBottom: 9 },
+  phoneRow: { flexDirection: 'row', borderWidth: 2, borderColor: '#E5E7EB', borderRadius: 14, overflow: 'hidden', marginBottom: 8 },
+  countryPill: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#FFFFFF', paddingHorizontal: 14, borderRightWidth: 2, borderRightColor: '#374151' },
   flagTxt: { fontSize: 22 },
-  dialCode: { fontFamily: FONTS.bold, fontSize: 16, color: COLORS.text, marginLeft: 6 },
-  phoneInput: { flex: 1, paddingHorizontal: 16, paddingVertical: 16, fontFamily: FONTS.semiBold, fontSize: 18, color: COLORS.text, letterSpacing: 2 },
+  dialCode: { fontFamily: FONTS.bold, fontSize: 16, color: '#111827', marginLeft: 6 },
+  phoneInput: { flex: 1, paddingHorizontal: 16, paddingVertical: 16, fontFamily: FONTS.semiBold, fontSize: 18, color: '#111827', letterSpacing: 2, backgroundColor: '#FFFFFF' },
   hintRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 20 },
-  hintTxt: { fontFamily: FONTS.regular, fontSize: 12, color: COLORS.textSecondary, flex: 1 },
+  hintTxt: { fontFamily: FONTS.regular, fontSize: 12, color: '#6B7280', flex: 1 },
   ctaBtn: { borderRadius: 16, overflow: 'hidden', marginTop: 2 },
   ctaDisabled: { opacity: 0.55 },
   ctaGrad: { paddingVertical: 18, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' },
-  ctaTxt: { fontFamily: FONTS.bold, fontSize: 16, color: '#fff', letterSpacing: 0.4 },
-  modeToggle: { flexDirection: 'row', backgroundColor: '#F2F3F5', borderRadius: 12, padding: 3, marginBottom: 18 },
+  ctaTxt: { fontFamily: FONTS.bold, fontSize: 16, color: '#FFFFFF', letterSpacing: 0.4 },
+  modeToggle: { flexDirection: 'row', backgroundColor: '#FFFFFF', borderRadius: 12, padding: 3, marginBottom: 18 },
   modeBtn: { flex: 1, paddingVertical: 10, alignItems: 'center', borderRadius: 10 },
-  modeBtnOn: { backgroundColor: '#fff', shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.06, shadowRadius: 3, elevation: 1 },
-  modeTxt: { fontFamily: FONTS.medium, fontSize: 14, color: COLORS.textSecondary },
-  modeTxtOn: { fontFamily: FONTS.semiBold, color: COLORS.primary },
-  inputBox: { flexDirection: 'row', alignItems: 'center', borderWidth: 2, borderColor: '#EBEBEB', borderRadius: 14, paddingHorizontal: 14, marginBottom: 14, backgroundColor: '#FAFAFA' },
+  modeBtnOn: { backgroundColor: '#F3F4F6', shadowColor: '#D4A017', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.15, shadowRadius: 3, elevation: 1 },
+  modeTxt: { fontFamily: FONTS.medium, fontSize: 14, color: '#6B7280' },
+  modeTxtOn: { fontFamily: FONTS.semiBold, color: '#D4A017' },
+  inputBox: { flexDirection: 'row', alignItems: 'center', borderWidth: 2, borderColor: '#E5E7EB', borderRadius: 14, paddingHorizontal: 14, marginBottom: 14, backgroundColor: '#FFFFFF' },
   inputIco: { marginRight: 10 },
-  inputField: { flex: 1, paddingVertical: 15, fontFamily: FONTS.regular, fontSize: 15, color: COLORS.text },
+  inputField: { flex: 1, paddingVertical: 15, fontFamily: FONTS.regular, fontSize: 15, color: '#111827' },
   divider: { flexDirection: 'row', alignItems: 'center', marginVertical: 22 },
-  divLine: { flex: 1, height: 1, backgroundColor: '#EBEBEB' },
-  divTxt: { fontFamily: FONTS.medium, fontSize: 12, color: COLORS.textSecondary, marginHorizontal: 14 },
+  divLine: { flex: 1, height: 1, backgroundColor: '#E5E7EB' },
+  divTxt: { fontFamily: FONTS.medium, fontSize: 12, color: '#6B7280', marginHorizontal: 14 },
   googleBtn: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
-    borderWidth: 1.5, borderColor: '#E2E8F0', borderRadius: 16, paddingVertical: 15,
-    backgroundColor: '#FAFAFA', shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.05, shadowRadius: 6, elevation: 2,
+    borderWidth: 1.5, borderColor: '#E5E7EB', borderRadius: 16, paddingVertical: 15,
+    backgroundColor: '#FFFFFF',
   },
-  gBadge: { width: 30, height: 30, borderRadius: 8, backgroundColor: '#EAF0FF', alignItems: 'center', justifyContent: 'center', marginRight: 10 },
-  gLetter: { fontFamily: FONTS.bold, fontSize: 16, color: '#4285F4' },
-  googleTxt: { fontFamily: FONTS.semiBold, fontSize: 15, color: COLORS.text },
-  privacy: { fontFamily: FONTS.regular, fontSize: 11.5, color: COLORS.textSecondary, textAlign: 'center', marginTop: 18, lineHeight: 18 },
-  privacyLink: { color: COLORS.primary, fontFamily: FONTS.medium },
+  gBadge: { width: 30, height: 30, borderRadius: 8, backgroundColor: '#F3F4F6', alignItems: 'center', justifyContent: 'center', marginRight: 10 },
+  gLetter: { fontFamily: FONTS.bold, fontSize: 16, color: '#D4A017' },
+  googleTxt: { fontFamily: FONTS.semiBold, fontSize: 15, color: '#111827' },
+  privacy: { fontFamily: FONTS.regular, fontSize: 11.5, color: '#6B7280', textAlign: 'center', marginTop: 18, lineHeight: 18 },
+  privacyLink: { color: '#D4A017', fontFamily: FONTS.medium },
 });

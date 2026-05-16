@@ -83,7 +83,7 @@ export default function SymptomChatScreen({ navigation, route }) {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       keyboardVerticalOffset={88}
     >
-      <StatusBar backgroundColor={COLORS.primary} barStyle="light-content" />
+      <StatusBar backgroundColor={COLORS.primary} barStyle="dark-content" />
 
       {/* Header */}
       <View style={styles.header}>
@@ -157,10 +157,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row', alignItems: 'center',
     backgroundColor: COLORS.primary, padding: 16, paddingTop: 48,
   },
-  back: { color: '#fff', fontSize: 22, fontWeight: 'bold' },
-  headerTitle: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
+  back: { color: '#111827', fontSize: 22, fontWeight: 'bold' },
+  headerTitle: { color: '#111827', fontWeight: 'bold', fontSize: 16 },
   headerSub: { color: '#B3D4FF', fontSize: 12 },
-  doctorBtn: { color: '#fff', backgroundColor: 'rgba(255,255,255,0.2)', padding: 8, borderRadius: 8, fontSize: 13 },
+  doctorBtn: { color: '#111827', backgroundColor: 'rgba(255,255,255,0.2)', padding: 8, borderRadius: 8, fontSize: 13 },
   messageList: { padding: 16, paddingBottom: 8 },
   bubble: { flexDirection: 'row', marginBottom: 16, alignItems: 'flex-end' },
   userBubble: { justifyContent: 'flex-end' },
@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
   aiInner: { backgroundColor: COLORS.white, borderTopLeftRadius: 4, elevation: 1 },
   userInner: { backgroundColor: COLORS.primary, borderTopRightRadius: 4 },
   bubbleText: { fontSize: 14, color: COLORS.text, lineHeight: 20 },
-  userText: { color: '#fff' },
+  userText: { color: '#111827' },
   typingIndicator: {
     flexDirection: 'row', alignItems: 'center', paddingHorizontal: 20, paddingVertical: 8,
   },
@@ -199,5 +199,5 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.primary, alignItems: 'center', justifyContent: 'center',
   },
   sendBtnDisabled: { backgroundColor: COLORS.border },
-  sendIcon: { color: '#fff', fontSize: 16 },
+  sendIcon: { color: '#111827', fontSize: 16 },
 });

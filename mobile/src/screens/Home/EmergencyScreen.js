@@ -36,12 +36,12 @@ export default function EmergencyScreen({ navigation }) {
 
   return (
     <View style={styles.root}>
-      <StatusBar translucent backgroundColor="transparent" barStyle="light-content" />
+      <StatusBar translucent backgroundColor="transparent" barStyle="dark-content" />
 
       {/* Red Alert Header */}
       <LinearGradient colors={['#7F1D1D', '#DC2626']} style={styles.header} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
         <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={22} color="#fff" />
+          <Ionicons name="arrow-back" size={22} color="#111827" />
         </TouchableOpacity>
         <Text style={styles.headerEmoji}>🆘</Text>
         <Text style={styles.headerTitle}>Emergency</Text>
@@ -155,22 +155,22 @@ const styles = StyleSheet.create({
   header: { paddingTop: 56, paddingBottom: 28, paddingHorizontal: 20, alignItems: 'center' },
   backBtn: {
     position: 'absolute', top: 56, left: 20,
-    width: 40, height: 40, borderRadius: 12, backgroundColor: 'rgba(255,255,255,0.15)',
+    width: 40, height: 40, borderRadius: 12, backgroundColor: 'rgba(0,0,0,0.06)',
     alignItems: 'center', justifyContent: 'center',
   },
   headerEmoji: { fontSize: 36, marginBottom: 8 },
-  headerTitle: { fontFamily: FONTS.bold, fontSize: 26, color: '#fff', marginBottom: 4 },
-  headerSub: { fontFamily: FONTS.regular, fontSize: 13, color: 'rgba(255,255,255,0.7)', marginBottom: 24 },
+  headerTitle: { fontFamily: FONTS.bold, fontSize: 26, color: '#111827', marginBottom: 4 },
+  headerSub: { fontFamily: FONTS.regular, fontSize: 13, color: '#6B7280', marginBottom: 24 },
   sosBtn: {
     width: 140, height: 140, borderRadius: 70,
     borderWidth: 4, borderColor: 'rgba(255,255,255,0.4)',
-    backgroundColor: 'rgba(255,255,255,0.15)',
+    backgroundColor: 'rgba(0,0,0,0.06)',
     alignItems: 'center', justifyContent: 'center',
     shadowColor: '#fff', shadowOffset: { width: 0, height: 0 }, shadowOpacity: 0.3, shadowRadius: 20, elevation: 10,
   },
   sosBtnInner: { alignItems: 'center' },
-  sosBtnText: { fontFamily: FONTS.bold, fontSize: 36, color: '#fff', letterSpacing: 2 },
-  sosBtnSub: { fontFamily: FONTS.medium, fontSize: 11, color: 'rgba(255,255,255,0.85)', marginTop: 4 },
+  sosBtnText: { fontFamily: FONTS.bold, fontSize: 36, color: '#111827', letterSpacing: 2 },
+  sosBtnSub: { fontFamily: FONTS.medium, fontSize: 11, color: '#4B5563', marginTop: 4 },
 
   body: { padding: 16 },
   section: { marginBottom: 24 },
@@ -183,7 +183,7 @@ const styles = StyleSheet.create({
   emergencyCard: { width: '47%', borderRadius: 18, overflow: 'hidden' },
   emergencyGrad: { padding: 18, alignItems: 'center' },
   emergencyIcon: { fontSize: 32, marginBottom: 8 },
-  emergencyName: { fontFamily: FONTS.bold, fontSize: 14, color: '#fff', marginBottom: 4 },
+  emergencyName: { fontFamily: FONTS.bold, fontSize: 14, color: '#111827', marginBottom: 4 },
   emergencyNumber: { flexDirection: 'row', alignItems: 'center', gap: 4 },
   emergencyNum: { fontFamily: FONTS.semiBold, fontSize: 16, color: 'rgba(255,255,255,0.9)' },
 
@@ -195,7 +195,7 @@ const styles = StyleSheet.create({
   emptyTitle: { fontFamily: FONTS.bold, fontSize: 15, color: COLORS.text, marginBottom: 6 },
   emptySub: { fontFamily: FONTS.regular, fontSize: 13, color: COLORS.textSecondary, textAlign: 'center', lineHeight: 18, marginBottom: 16 },
   addContactBtn: { backgroundColor: COLORS.primary, borderRadius: 12, paddingHorizontal: 20, paddingVertical: 10 },
-  addContactBtnText: { fontFamily: FONTS.semiBold, fontSize: 13, color: '#fff' },
+  addContactBtnText: { fontFamily: FONTS.semiBold, fontSize: 13, color: '#111827' },
 
   firstAidCard: {
     backgroundColor: COLORS.white, borderRadius: 16, padding: 16,
@@ -214,6 +214,6 @@ const styles = StyleSheet.create({
     width: 24, height: 24, borderRadius: 12, backgroundColor: COLORS.dark,
     alignItems: 'center', justifyContent: 'center', flexShrink: 0,
   },
-  stepNumText: { fontFamily: FONTS.bold, fontSize: 11, color: '#fff' },
+  stepNumText: { fontFamily: FONTS.bold, fontSize: 11, color: '#111827' },
   stepText: { fontFamily: FONTS.regular, fontSize: 13, color: COLORS.text, flex: 1, lineHeight: 19 },
 });

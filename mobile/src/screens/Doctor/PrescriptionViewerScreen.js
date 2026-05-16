@@ -130,8 +130,8 @@ export default function PrescriptionViewerScreen({ navigation, route }) {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.background },
   header: { backgroundColor: COLORS.primary, padding: 20, paddingTop: 48 },
-  back: { color: 'rgba(255,255,255,0.8)', marginBottom: 8 },
-  heading: { fontSize: 22, fontWeight: 'bold', color: '#fff' },
+  back: { color: '#4B5563', marginBottom: 8 },
+  heading: { fontSize: 22, fontWeight: 'bold', color: '#111827' },
   rxCard: {
     backgroundColor: COLORS.white, margin: 16, borderRadius: 14,
     padding: 20, elevation: 2,
@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
   },
   medNum: {
     width: 24, height: 24, borderRadius: 12,
-    backgroundColor: COLORS.primary, color: '#fff',
+    backgroundColor: COLORS.primary, color: '#111827',
     textAlign: 'center', lineHeight: 24, fontWeight: 'bold',
     marginRight: 12, fontSize: 12,
   },
@@ -167,7 +167,7 @@ const styles = StyleSheet.create({
     flex: 1, backgroundColor: COLORS.primary,
     borderRadius: 12, paddingVertical: 14, alignItems: 'center',
   },
-  downloadBtnText: { color: '#fff', fontWeight: 'bold', fontSize: 14 },
+  downloadBtnText: { color: '#111827', fontWeight: 'bold', fontSize: 14 },
   shareBtn: {
     flex: 1, backgroundColor: COLORS.white,
     borderRadius: 12, paddingVertical: 14, alignItems: 'center',

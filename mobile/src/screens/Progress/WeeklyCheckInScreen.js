@@ -98,8 +98,8 @@ export default function WeeklyCheckInScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.background },
   header: { backgroundColor: COLORS.primary, padding: 20, paddingTop: 48 },
-  back: { color: '#fff', fontSize: 22, marginBottom: 8 },
-  heading: { fontSize: 22, fontWeight: 'bold', color: '#fff' },
+  back: { color: '#111827', fontSize: 22, marginBottom: 8 },
+  heading: { fontSize: 22, fontWeight: 'bold', color: '#111827' },
   sub: { fontSize: 13, color: '#B3D4FF', marginTop: 4 },
   section: { backgroundColor: COLORS.white, margin: 16, borderRadius: 12, padding: 16, marginBottom: 0, marginTop: 16 },
   sectionTitle: { fontSize: 15, fontWeight: 'bold', color: COLORS.text, marginBottom: 14 },
@@ -123,5 +123,5 @@ const styles = StyleSheet.create({
     paddingVertical: 16, alignItems: 'center',
   },
   submitBtnDisabled: { opacity: 0.6 },
-  submitBtnText: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
+  submitBtnText: { color: '#111827', fontWeight: 'bold', fontSize: 16 },
 });

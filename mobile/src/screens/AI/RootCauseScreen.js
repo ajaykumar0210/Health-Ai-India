@@ -133,8 +133,8 @@ const styles = StyleSheet.create({
   loadingText: { fontSize: 18, fontWeight: 'bold', color: COLORS.text, marginTop: 20, textAlign: 'center' },
   loadingSubText: { fontSize: 14, color: COLORS.textSecondary, marginTop: 8, textAlign: 'center' },
   header: { backgroundColor: COLORS.primary, padding: 20, paddingTop: 48 },
-  back: { color: 'rgba(255,255,255,0.8)', marginBottom: 12 },
-  heading: { fontSize: 22, fontWeight: 'bold', color: '#fff' },
+  back: { color: '#4B5563', marginBottom: 12 },
+  heading: { fontSize: 22, fontWeight: 'bold', color: '#111827' },
   sub: { fontSize: 14, color: '#B3D4FF', marginTop: 4 },
   section: { backgroundColor: COLORS.white, margin: 16, borderRadius: 12, padding: 16 },
   sectionTitle: { fontSize: 15, fontWeight: 'bold', color: COLORS.text, marginBottom: 12 },
@@ -160,7 +160,7 @@ const styles = StyleSheet.create({
   doctorCTA: {
     backgroundColor: COLORS.primary, marginHorizontal: 16, borderRadius: 12, padding: 20,
   },
-  doctorCTATitle: { fontSize: 18, fontWeight: 'bold', color: '#fff', marginBottom: 8 },
+  doctorCTATitle: { fontSize: 18, fontWeight: 'bold', color: '#111827', marginBottom: 8 },
   doctorCTASub: { fontSize: 14, color: '#B3D4FF', marginBottom: 16 },
   doctorBtn: {
     backgroundColor: COLORS.white, borderRadius: 10, paddingVertical: 14, alignItems: 'center',

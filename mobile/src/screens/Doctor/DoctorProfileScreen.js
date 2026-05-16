@@ -98,18 +98,18 @@ export default function DoctorProfileScreen({ navigation, route }) {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.background },
   header: { backgroundColor: COLORS.primary, padding: 20, paddingTop: 48 },
-  back: { color: 'rgba(255,255,255,0.8)', fontSize: 22, marginBottom: 16 },
+  back: { color: '#4B5563', fontSize: 22, marginBottom: 16 },
   profileSection: { alignItems: 'center', paddingBottom: 20 },
   avatar: {
     width: 80, height: 80, borderRadius: 40,
     backgroundColor: 'rgba(255,255,255,0.3)', alignItems: 'center',
     justifyContent: 'center', marginBottom: 12,
   },
-  avatarText: { color: '#fff', fontSize: 32, fontWeight: 'bold' },
-  name: { fontSize: 22, fontWeight: 'bold', color: '#fff', marginBottom: 4 },
+  avatarText: { color: '#111827', fontSize: 32, fontWeight: 'bold' },
+  name: { fontSize: 22, fontWeight: 'bold', color: '#111827', marginBottom: 4 },
   spec: { fontSize: 14, color: '#B3D4FF', marginBottom: 8 },
   ratingRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  rating: { color: '#fff', fontWeight: '600' },
+  rating: { color: '#111827', fontWeight: '600' },
   ratingDivider: { color: '#B3D4FF' },
   consultCount: { color: '#B3D4FF', fontSize: 13 },
   statsGrid: {
@@ -133,5 +133,5 @@ const styles = StyleSheet.create({
     paddingVertical: 16, alignItems: 'center',
   },
   bookBtnDisabled: { backgroundColor: COLORS.border },
-  bookBtnText: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
+  bookBtnText: { color: '#111827', fontWeight: 'bold', fontSize: 16 },
 });

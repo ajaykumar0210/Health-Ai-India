@@ -73,8 +73,8 @@ function MainTabs() {
           return (
             <View style={{ alignItems: 'center', justifyContent: 'center' }}>
               {focused ? (
-                <LinearGradient colors={['#1E3A5F', '#3B82C4']} style={{ borderRadius: 10, padding: 6 }}>
-                  <Ionicons name={iconName} size={20} color="#fff" />
+                <LinearGradient colors={['#D4A017', '#B8860B']} style={{ borderRadius: 10, padding: 6 }}>
+                  <Ionicons name={iconName} size={20} color="#FFFFFF" />
                 </LinearGradient>
               ) : (
                 <Ionicons name={iconName} size={22} color={color} />
@@ -91,12 +91,12 @@ function MainTabs() {
             {TAB_CONFIG[route.name].label}
           </Text>
         ),
-        tabBarActiveTintColor: '#1E3A5F',
-        tabBarInactiveTintColor: COLORS.textLight,
+        tabBarActiveTintColor: '#D4A017',
+        tabBarInactiveTintColor: '#9CA3AF',
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: '#0B1929',
-          borderTopWidth: 1, borderTopColor: '#122640',
+          backgroundColor: '#FFFFFF',
+          borderTopWidth: 1, borderTopColor: '#E5E7EB',
           height: 68, paddingBottom: 10, paddingTop: 6,
         },
       })}

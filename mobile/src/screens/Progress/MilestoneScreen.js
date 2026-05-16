@@ -87,8 +87,8 @@ export default function MilestoneScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.background },
   header: { backgroundColor: COLORS.primary, padding: 20, paddingTop: 48 },
-  back: { color: '#fff', fontSize: 22, marginBottom: 8 },
-  heading: { fontSize: 22, fontWeight: 'bold', color: '#fff' },
+  back: { color: '#111827', fontSize: 22, marginBottom: 8 },
+  heading: { fontSize: 22, fontWeight: 'bold', color: '#111827' },
   sub: { fontSize: 13, color: '#B3D4FF', marginTop: 4 },
   statsRow: {
     flexDirection: 'row', backgroundColor: COLORS.white,

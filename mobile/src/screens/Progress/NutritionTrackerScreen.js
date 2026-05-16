@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
   StatusBar, Alert,
@@ -27,11 +27,11 @@ export default function NutritionTrackerScreen({ navigation }) {
 
   return (
     <View style={styles.root}>
-      <StatusBar translucent backgroundColor="transparent" barStyle="light-content" />
+      <StatusBar translucent backgroundColor="transparent" barStyle="dark-content" />
 
-      <LinearGradient colors={['#059669', '#0D9488']} style={styles.header}>
+      <LinearGradient colors={['#059669', '#D4A017']} style={styles.header}>
         <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={22} color="#fff" />
+          <Ionicons name="arrow-back" size={22} color="#111827" />
         </TouchableOpacity>
         <View style={styles.headerRow}>
           <View>
@@ -39,7 +39,7 @@ export default function NutritionTrackerScreen({ navigation }) {
             <Text style={styles.headerDate}>{new Date().toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'short' })}</Text>
           </View>
           <TouchableOpacity style={styles.logBtn} onPress={() => Alert.alert('Add Food', 'Search and add food items')}>
-            <Ionicons name="add" size={22} color="#fff" />
+            <Ionicons name="add" size={22} color="#111827" />
           </TouchableOpacity>
         </View>
 
@@ -163,32 +163,32 @@ const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: COLORS.background },
   header: { paddingTop: 56, paddingBottom: 24, paddingHorizontal: 20 },
   backBtn: {
-    width: 40, height: 40, borderRadius: 12, backgroundColor: 'rgba(255,255,255,0.15)',
+    width: 40, height: 40, borderRadius: 12, backgroundColor: 'rgba(0,0,0,0.06)',
     alignItems: 'center', justifyContent: 'center', marginBottom: 14,
   },
   headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20 },
-  headerTitle: { fontFamily: FONTS.bold, fontSize: 22, color: '#fff' },
-  headerDate: { fontFamily: FONTS.regular, fontSize: 12, color: 'rgba(255,255,255,0.7)', marginTop: 2 },
+  headerTitle: { fontFamily: FONTS.bold, fontSize: 22, color: '#111827' },
+  headerDate: { fontFamily: FONTS.regular, fontSize: 12, color: '#6B7280', marginTop: 2 },
   logBtn: {
     width: 44, height: 44, borderRadius: 14, backgroundColor: 'rgba(255,255,255,0.2)',
     alignItems: 'center', justifyContent: 'center',
   },
   calCard: {
-    flexDirection: 'row', backgroundColor: 'rgba(255,255,255,0.12)',
-    borderRadius: 20, padding: 18, borderWidth: 1, borderColor: 'rgba(255,255,255,0.2)',
+    flexDirection: 'row', backgroundColor: 'rgba(0,0,0,0.05)',
+    borderRadius: 20, padding: 18, borderWidth: 1, borderColor: '#E5E7EB',
   },
   calLeft: { flex: 1 },
-  calLabel: { fontFamily: FONTS.medium, fontSize: 12, color: 'rgba(255,255,255,0.7)', marginBottom: 4 },
-  calVal: { fontFamily: FONTS.bold, fontSize: 32, color: '#fff' },
-  calTarget: { fontFamily: FONTS.regular, fontSize: 16, color: 'rgba(255,255,255,0.5)' },
-  calSub: { fontFamily: FONTS.regular, fontSize: 11, color: 'rgba(255,255,255,0.6)', marginTop: 4, marginBottom: 10 },
+  calLabel: { fontFamily: FONTS.medium, fontSize: 12, color: '#6B7280', marginBottom: 4 },
+  calVal: { fontFamily: FONTS.bold, fontSize: 32, color: '#111827' },
+  calTarget: { fontFamily: FONTS.regular, fontSize: 16, color: '#6B7280' },
+  calSub: { fontFamily: FONTS.regular, fontSize: 11, color: '#6B7280', marginTop: 4, marginBottom: 10 },
   calBar: { height: 6, backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: 3, width: '80%' },
   calFill: { height: 6, backgroundColor: '#fff', borderRadius: 3 },
   macroCol: { justifyContent: 'space-around', paddingLeft: 16 },
   macroItem: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   macroDot: { width: 8, height: 8, borderRadius: 4 },
-  macroVal: { fontFamily: FONTS.bold, fontSize: 13, color: '#fff' },
-  macroLabel: { fontFamily: FONTS.regular, fontSize: 10, color: 'rgba(255,255,255,0.6)' },
+  macroVal: { fontFamily: FONTS.bold, fontSize: 13, color: '#111827' },
+  macroLabel: { fontFamily: FONTS.regular, fontSize: 10, color: '#6B7280' },
 
   body: { padding: 16 },
   section: { marginBottom: 24 },
@@ -210,7 +210,7 @@ const styles = StyleSheet.create({
   },
   mealTabActive: { backgroundColor: COLORS.success, borderColor: COLORS.success },
   mealTabText: { fontFamily: FONTS.medium, fontSize: 13, color: COLORS.textSecondary },
-  mealTabTextActive: { color: '#fff', fontFamily: FONTS.semiBold },
+  mealTabTextActive: { color: '#111827', fontFamily: FONTS.semiBold },
 
   mealCard: {
     backgroundColor: COLORS.white, borderRadius: 16, padding: 16,

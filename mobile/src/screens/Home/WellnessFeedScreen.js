@@ -8,37 +8,37 @@ const CATEGORIES = ['All', 'Hair', 'Skin', 'Nutrition', 'Sleep', 'Mental'];
 
 const ARTICLES = [
   {
-    id: '1', cat: 'Hair', emoji: 'ðŸ’‡â€â™‚ï¸', readTime: '4 min',
+    id: '1', cat: 'Hair', emoji: '💇‍♂️', readTime: '4 min',
     title: '7 Science-Backed Ways to Stop Hair Fall',
-    sub: 'From DHT blockers to biotin â€” what actually works vs what\'s a myth.',
-    gradient: ['#1E3A5F', '#3B82C4'], tag: 'TRENDING',
+    sub: 'From DHT blockers to biotin — what actually works vs what\'s a myth.',
+    gradient: ['#D4A017', '#B8860B'], tag: 'TRENDING',
   },
   {
-    id: '2', cat: 'Skin', emoji: 'âœ¨', readTime: '6 min',
+    id: '2', cat: 'Skin', emoji: '✨', readTime: '6 min',
     title: 'The Indian Skincare Routine for Pigmentation',
-    sub: 'Niacinamide, Kojic Acid & Sunscreen â€” the dermat-approved combo.',
-    gradient: ['#0D9488', '#14B8A6'], tag: 'EXPERT',
+    sub: 'Niacinamide, Kojic Acid & Sunscreen — the dermat-approved combo.',
+    gradient: ['#D4A017', '#E6B422'], tag: 'EXPERT',
   },
   {
-    id: '3', cat: 'Nutrition', emoji: 'ðŸ¥—', readTime: '3 min',
+    id: '3', cat: 'Nutrition', emoji: '🥗', readTime: '3 min',
     title: 'Foods That Boost Hair Growth Naturally',
-    sub: 'Amla, spinach, eggs â€” the Indian superfoods your hair loves.',
-    gradient: ['#059669', '#0D9488'], tag: '',
+    sub: 'Amla, spinach, eggs — the Indian superfoods your hair loves.',
+    gradient: ['#059669', '#D4A017'], tag: '',
   },
   {
-    id: '4', cat: 'Sleep', emoji: 'ðŸŒ™', readTime: '5 min',
+    id: '4', cat: 'Sleep', emoji: '🌙', readTime: '5 min',
     title: 'How Bad Sleep Causes Hair Loss & Acne',
     sub: 'The cortisol-sleep-skin connection explained simply.',
     gradient: ['#1E1B4B', '#4338CA'], tag: 'NEW',
   },
   {
-    id: '5', cat: 'Mental', emoji: 'ðŸ§ ', readTime: '7 min',
+    id: '5', cat: 'Mental', emoji: '🧠', readTime: '7 min',
     title: 'Stress & Hair Fall: Break the Cycle',
     sub: 'Telogen effluvium is real. Here\'s how to manage stress-induced hair loss.',
     gradient: ['#D97706', '#F59E0B'], tag: '',
   },
   {
-    id: '6', cat: 'Skin', emoji: 'ðŸ§´', readTime: '4 min',
+    id: '6', cat: 'Skin', emoji: '🧴', readTime: '4 min',
     title: 'Tretinoin vs Retinol: What Indian Skin Needs',
     sub: 'A dermatologist\'s guide to retinoids for Indian skin types.',
     gradient: ['#DB2777', '#EC4899'], tag: 'EXPERT',
@@ -54,12 +54,12 @@ export default function WellnessFeedScreen({ navigation }) {
 
   return (
     <View style={styles.root}>
-      <StatusBar translucent backgroundColor="transparent" barStyle="light-content" />
+      <StatusBar translucent backgroundColor="transparent" barStyle="dark-content" />
 
       {/* Header */}
       <LinearGradient colors={GRADIENTS.hero} style={styles.header}>
         <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={22} color="#fff" />
+          <Ionicons name="arrow-back" size={22} color="#111827" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Wellness Feed</Text>
         <Text style={styles.headerSub}>Expert-curated health articles</Text>
@@ -98,7 +98,7 @@ export default function WellnessFeedScreen({ navigation }) {
                 <Ionicons name="time-outline" size={12} color={COLORS.textLight} />
                 <Text style={styles.cardRead}>{a.readTime} read</Text>
                 <TouchableOpacity style={styles.readBtn}>
-                  <Text style={styles.readBtnText}>Read â†’</Text>
+                  <Text style={styles.readBtnText}>Read →</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -114,11 +114,11 @@ const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: COLORS.background },
   header: { paddingTop: 56, paddingBottom: 24, paddingHorizontal: 20 },
   backBtn: {
-    width: 40, height: 40, borderRadius: 12, backgroundColor: 'rgba(255,255,255,0.12)',
+    width: 40, height: 40, borderRadius: 12, backgroundColor: 'rgba(0,0,0,0.05)',
     alignItems: 'center', justifyContent: 'center', marginBottom: 14,
   },
-  headerTitle: { fontFamily: FONTS.bold, fontSize: 24, color: '#fff', marginBottom: 4 },
-  headerSub: { fontFamily: FONTS.regular, fontSize: 13, color: 'rgba(255,255,255,0.6)' },
+  headerTitle: { fontFamily: FONTS.bold, fontSize: 24, color: '#111827', marginBottom: 4 },
+  headerSub: { fontFamily: FONTS.regular, fontSize: 13, color: '#6B7280' },
 
   catBar: { maxHeight: 60, backgroundColor: COLORS.white, borderBottomWidth: 1, borderBottomColor: COLORS.border },
   catContent: { paddingHorizontal: 16, paddingVertical: 12, gap: 8, alignItems: 'center' },
@@ -128,7 +128,7 @@ const styles = StyleSheet.create({
   },
   catChipActive: { backgroundColor: COLORS.dark, borderColor: COLORS.dark },
   catText: { fontFamily: FONTS.medium, fontSize: 13, color: COLORS.textSecondary },
-  catTextActive: { color: '#fff' },
+  catTextActive: { color: '#111827' },
 
   list: { padding: 16, gap: 14 },
   card: {
@@ -143,12 +143,12 @@ const styles = StyleSheet.create({
   },
   articleTag: {
     position: 'absolute', top: 8, left: 6,
-    backgroundColor: 'rgba(255,255,255,0.25)', borderRadius: 6,
+    backgroundColor: 'rgba(0,0,0,0.08)', borderRadius: 6,
     paddingHorizontal: 5, paddingVertical: 2,
   },
-  articleTagText: { fontFamily: FONTS.bold, fontSize: 7, color: '#fff', letterSpacing: 0.5 },
+  articleTagText: { fontFamily: FONTS.bold, fontSize: 7, color: '#111827', letterSpacing: 0.5 },
   cardEmoji: { fontSize: 28 },
-  cardCat: { fontFamily: FONTS.bold, fontSize: 9, color: 'rgba(255,255,255,0.8)', letterSpacing: 1 },
+  cardCat: { fontFamily: FONTS.bold, fontSize: 9, color: '#4B5563', letterSpacing: 1 },
   cardRight: { flex: 1, padding: 14 },
   cardTitle: { fontFamily: FONTS.bold, fontSize: 14, color: COLORS.text, lineHeight: 20, marginBottom: 4 },
   cardSub: { fontFamily: FONTS.regular, fontSize: 12, color: COLORS.textSecondary, lineHeight: 17, marginBottom: 10 },
