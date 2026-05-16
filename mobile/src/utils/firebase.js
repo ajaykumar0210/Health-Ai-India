@@ -40,9 +40,9 @@ try {
 // Firestore
 const db = getFirestore(app);
 
-// Phone Auth — pass the FirebaseRecaptchaVerifierModal ref from the component
-export async function sendOTP(phoneNumber, recaptchaVerifierRef) {
-  const confirmationResult = await signInWithPhoneNumber(auth, phoneNumber, recaptchaVerifierRef);
+// Phone Auth — uses Firebase signInWithPhoneNumber (test numbers bypass reCAPTCHA)
+export async function sendOTP(phoneNumber) {
+  const confirmationResult = await signInWithPhoneNumber(auth, phoneNumber);
   return confirmationResult;
 }
 

@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import {
   View, Text, StyleSheet, TextInput, TouchableOpacity,
   KeyboardAvoidingView, Platform, ScrollView, StatusBar,
@@ -7,10 +7,9 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { FirebaseRecaptchaVerifierModal } from 'expo-firebase-recaptcha';
 import * as Google from 'expo-auth-session/providers/google';
 import { COLORS, GRADIENTS, FONTS } from '../../utils/constants';
-import { sendOTP, getUserProfile, GoogleAuthProvider, signInWithCredential, firebaseConfig } from '../../utils/firebase';
+import { sendOTP, getUserProfile, GoogleAuthProvider, signInWithCredential } from '../../utils/firebase';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../utils/firebase';
 import useAppStore from '../../store/useAppStore';
@@ -39,7 +38,7 @@ export default function LoginScreen({ navigation }) {
   const [loading, setLoading] = useState(false);
   const setUser = useAppStore((s) => s.setUser);
   const setToken = useAppStore((s) => s.setToken);
-  const recaptchaVerifier = useRef(null);
+
 
   // Google Sign-In via expo-auth-session
   const [request, response, promptAsync] = Google.useAuthRequest({ webClientId: WEB_CLIENT_ID });
@@ -80,7 +79,7 @@ export default function LoginScreen({ navigation }) {
     }
     setLoading(true);
     try {
-      const confirmationResult = await sendOTP('+91' + cleaned, recaptchaVerifier.current);
+      const confirmationResult = await sendOTP('+91' + cleaned);
       setLoading(false);
       navigation.navigate('OTPVerify', { phone: '+91' + cleaned, confirmationResult });
     } catch (err) {
@@ -132,12 +131,6 @@ export default function LoginScreen({ navigation }) {
   return (
     <View style={styles.root}>
       <StatusBar translucent backgroundColor="transparent" barStyle="dark-content" />
-      {/* Native reCAPTCHA modal for Firebase Phone Auth */}
-      <FirebaseRecaptchaVerifierModal
-        ref={recaptchaVerifier}
-        firebaseConfig={firebaseConfig}
-        attemptInvisibleVerification
-      />
 
       <LinearGradient
         colors={['#FFFFFF', '#F9FAFB', '#FFFFFF']}
