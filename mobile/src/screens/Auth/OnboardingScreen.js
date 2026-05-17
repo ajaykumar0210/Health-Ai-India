@@ -157,7 +157,10 @@ export default function OnboardingScreen({ navigation }) {
           <Text style={styles.skipText}>Skip</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={handleNext} activeOpacity={0.85}>
+        <TouchableOpacity
+          onPress={currentIndex === SLIDES.length - 1 ? () => navigation.replace('Login') : handleNext}
+          activeOpacity={0.85}
+        >
           <LinearGradient colors={['#D4A017', '#B8860B']} style={styles.nextBtn} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}>
             <Text style={styles.nextText}>
               {currentIndex === SLIDES.length - 1 ? 'Get Started' : 'Next'}
