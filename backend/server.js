@@ -17,7 +17,7 @@ const PORT = process.env.PORT || 3000;
 // ── Security ──────────────────────────────────────────────────────────────────
 app.use(helmet());
 app.use(cors({
-  origin: ['http://localhost:8081', 'https://api.healthai-india.com'],
+  origin: true, // React Native mobile apps don't enforce CORS; allow all origins
   credentials: true,
 }));
 

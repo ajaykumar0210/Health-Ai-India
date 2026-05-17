@@ -22,7 +22,7 @@ const useAppStore = create((set, get) => ({
   streaks: 0,
 
   // Language
-  language: 'hi', // 'hi' or 'en'
+  language: 'en', // 'en' | 'hi' | others
 
   // Actions
   setUser: (user) => set({ user, isAuthenticated: !!user }),
@@ -41,7 +41,8 @@ const useAppStore = create((set, get) => ({
       const token = await AsyncStorage.getItem('auth_token');
       const userRaw = await AsyncStorage.getItem('user_data');
       const user = userRaw ? JSON.parse(userRaw) : null;
-      set({ token, user, isAuthenticated: !!token, isLoading: false });
+      const savedLang = await AsyncStorage.getItem('app_language');
+      set({ token, user, isAuthenticated: !!token, isLoading: false, language: savedLang || 'en' });
     } catch {
       set({ isLoading: false });
     }
@@ -84,7 +85,10 @@ const useAppStore = create((set, get) => ({
 
   setStreaks: (streaks) => set({ streaks }),
 
-  setLanguage: (language) => set({ language }),
+  setLanguage: async (language) => {
+    await AsyncStorage.setItem('app_language', language);
+    set({ language });
+  },
 }));
 
 export default useAppStore;
