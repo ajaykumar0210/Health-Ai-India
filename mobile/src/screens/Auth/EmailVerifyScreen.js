@@ -5,9 +5,8 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
-import auth from '@react-native-firebase/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { getUserProfile } from '../../utils/firebase';
+import { auth, getUserProfile } from '../../utils/firebase';
 import useAppStore from '../../store/useAppStore';
 import { FONTS } from '../../utils/constants';
 
@@ -21,8 +20,8 @@ export default function EmailVerifyScreen({ navigation, route }) {
   const handleCheckVerified = async () => {
     setLoading(true);
     try {
-      await auth().currentUser.reload();
-      const user = auth().currentUser;
+      await auth.currentUser.reload();
+      const user = auth.currentUser;
       if (user.emailVerified) {
         const token = await user.getIdToken();
         const profile = await getUserProfile(user.uid);
@@ -57,7 +56,7 @@ export default function EmailVerifyScreen({ navigation, route }) {
   const handleResend = async () => {
     setResendLoading(true);
     try {
-      await auth().currentUser.sendEmailVerification();
+      await auth.currentUser.sendEmailVerification();
       Alert.alert('Email Sent', 'A new verification email has been sent to ' + email);
     } catch (err) {
       Alert.alert('Error', err.message || 'Failed to resend. Please try again later.');
@@ -68,7 +67,7 @@ export default function EmailVerifyScreen({ navigation, route }) {
 
   const handleBackToLogin = async () => {
     try {
-      await auth().signOut();
+      await auth.signOut();
     } catch (_) {}
     navigation.replace('Login');
   };

@@ -6,7 +6,7 @@ import { COLORS, CONCERNS } from '../../utils/constants';
 import useAppStore from '../../store/useAppStore';
 
 const GEMINI_API_KEY = 'AIzaSyDGW6VRp31lGuRF3JIhpIcTQpwa-b71AM8';
-const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`;
 
 const FALLBACK_ANALYSIS = {
   rootCause: 'Chronic Stress + Nutritional Deficiency',

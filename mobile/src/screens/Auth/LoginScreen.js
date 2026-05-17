@@ -9,8 +9,7 @@ import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
 import { COLORS, GRADIENTS, FONTS } from '../../utils/constants';
-import { sendOTP, getUserProfile, signInWithCredential } from '../../utils/firebase';
-import auth from '@react-native-firebase/auth';
+import { sendOTP, getUserProfile, signInWithCredential, createEmailUser, signInEmail, GoogleAuthProvider } from '../../utils/firebase';
 import { setPhoneConfirmation } from '../../utils/authState';
 import useAppStore from '../../store/useAppStore';
 
@@ -71,12 +70,12 @@ export default function LoginScreen({ navigation }) {
     try {
       if (mode === 'signup') {
         // Create account → send verification email → go to verify screen
-        const userCredential = await auth().createUserWithEmailAndPassword(email.trim(), password);
+        const userCredential = await createEmailUser(email.trim(), password);
         await userCredential.user.sendEmailVerification();
         navigation.navigate('EmailVerify', { email: email.trim() });
       } else {
         // Login → check email verified first
-        const userCredential = await auth().signInWithEmailAndPassword(email.trim(), password);
+        const userCredential = await signInEmail(email.trim(), password);
         const fbUser = userCredential.user;
         if (!fbUser.emailVerified) {
           navigation.navigate('EmailVerify', { email: email.trim() });
@@ -114,7 +113,7 @@ export default function LoginScreen({ navigation }) {
       const idToken = userInfo.data?.idToken ?? userInfo.idToken;
       if (!idToken) throw new Error('No ID token received from Google.');
       setLoading(true);
-      const credential = auth.GoogleAuthProvider.credential(idToken);
+      const credential = GoogleAuthProvider.credential(idToken);
       const result = await signInWithCredential(credential);
       const fbUser = result.user;
       const token = await fbUser.getIdToken();

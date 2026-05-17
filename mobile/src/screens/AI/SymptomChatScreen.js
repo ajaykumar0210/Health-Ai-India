@@ -7,7 +7,7 @@ import { COLORS } from '../../utils/constants';
 import useAppStore from '../../store/useAppStore';
 
 const GEMINI_API_KEY = 'AIzaSyDGW6VRp31lGuRF3JIhpIcTQpwa-b71AM8';
-const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`;
 
 const SYSTEM_PROMPT = `You are a helpful Indian health assistant for Health AI India app.
 You understand Hindi, English, and Hinglish.
@@ -84,10 +84,11 @@ export default function SymptomChatScreen({ navigation, route }) {
       const aiMsg = { id: (Date.now() + 1).toString(), role: 'assistant', text: reply };
       setMessages((prev) => [...prev, aiMsg]);
     } catch (err) {
+      console.error('Gemini error:', err?.message || err);
       const aiMsg = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        text: 'I\'m having trouble connecting right now. Please check your internet connection and try again.',
+        text: `I'm having trouble connecting right now. Error: ${err?.message || 'Network issue'}. Please check your internet and try again.`,
       };
       setMessages((prev) => [...prev, aiMsg]);
     } finally {

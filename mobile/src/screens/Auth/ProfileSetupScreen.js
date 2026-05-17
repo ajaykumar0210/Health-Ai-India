@@ -67,7 +67,7 @@ export default function ProfileSetupScreen({ navigation, route }) {
     setLoading(true);
     const userData = { name: name.trim(), age: parseInt(age), gender, bloodGroup, height, weight, language, email: route.params?.email || null, phone: route.params?.phone || null };
     try {
-      const uid = auth().currentUser?.uid || route.params?.uid;
+      const uid = auth.currentUser?.uid || route.params?.uid;
       if (uid) {
         await saveUserProfile(uid, userData);
       }
