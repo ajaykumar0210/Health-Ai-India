@@ -13,6 +13,7 @@ import OnboardingScreen from '../screens/Auth/OnboardingScreen';
 import LoginScreen from '../screens/Auth/LoginScreen';
 import OTPVerifyScreen from '../screens/Auth/OTPVerifyScreen';
 import ProfileSetupScreen from '../screens/Auth/ProfileSetupScreen';
+import EmailVerifyScreen from '../screens/Auth/EmailVerifyScreen';
 
 // Home
 import HomeScreen from '../screens/Home/HomeScreen';
@@ -119,6 +120,7 @@ export default function AppNavigator() {
         <Stack.Screen name="Onboarding" component={OnboardingScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="OTPVerify" component={OTPVerifyScreen} />
+        <Stack.Screen name="EmailVerify" component={EmailVerifyScreen} />
         <Stack.Screen name="ProfileSetup" component={ProfileSetupScreen} />
 
         {/* Main App */}

@@ -4,14 +4,35 @@ import {
   KeyboardAvoidingView, Platform, ActivityIndicator, StatusBar,
 } from 'react-native';
 import { COLORS } from '../../utils/constants';
-import { symptomsAPI } from '../../utils/api';
 import useAppStore from '../../store/useAppStore';
 
-const DISCLAIMER = '⚠️ यह medical diagnosis नहीं है। This is not a medical diagnosis — just a health assistant.';
+const GEMINI_API_KEY = 'AIzaSyDGW6VRp31lGuRF3JIhpIcTQpwa-b71AM8';
+const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
 
-const MOCK_RESPONSES = {
-  default: 'आपके लक्षणों के आधार पर, यह stress-related hair loss हो सकता है। मैं आपसे कुछ और जानकारी लेना चाहूंगा।\n\n*Based on your symptoms, this may be stress-related. I\'d like to know more.*\n\n1. यह समस्या कब से है? (How long have you had this?)\n2. क्या आप बहुत stressed रहते हैं? (Are you often stressed?)\n3. आपकी नींद कैसी है? (How is your sleep?)',
-};
+const SYSTEM_PROMPT = `You are a helpful Indian health assistant for Health AI India app.
+You understand Hindi, English, and Hinglish.
+You analyze symptoms, give practical advice, suggest home remedies, and advise when to see a doctor.
+Always respond in the same language the user writes in.
+Keep responses under 120 words. Be empathetic and clear.
+IMPORTANT: Never ask the same question twice. Remember everything the user has told you.
+Always add a gentle reminder to see a real doctor for serious symptoms.`;
+
+async function callGemini(geminiContents) {
+  const response = await fetch(GEMINI_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      system_instruction: { parts: [{ text: SYSTEM_PROMPT }] },
+      contents: geminiContents,
+      generationConfig: { temperature: 0.7, maxOutputTokens: 512 },
+    }),
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error?.message || 'Gemini error');
+  return data.candidates?.[0]?.content?.parts?.[0]?.text || 'Sorry, I could not respond. Please try again.';
+}
+
+const DISCLAIMER = '⚠️ This is not a medical diagnosis — just a health assistant.';
 
 export default function SymptomChatScreen({ navigation, route }) {
   const { concern } = route.params || {};
@@ -19,12 +40,11 @@ export default function SymptomChatScreen({ navigation, route }) {
     {
       id: '1',
       role: 'assistant',
-      text: `नमस्ते! 🙏 मैं आपका AI Health Assistant हूं।\n\nI understand you're concerned about **${concern || 'your health'}**. I'm here to help — everything you share is completely private.\n\nआपको क्या तकलीफ हो रही है? What's bothering you?\n\n${DISCLAIMER}`,
+      text: `Hello! 🙏 I'm your AI Health Assistant.\n\nI see you're concerned about **${concern || 'your health'}**. I'm here to help — everything you share is completely private and secure.\n\nWhat symptoms are you experiencing? Please describe how you're feeling.\n\n${DISCLAIMER}`,
     },
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
-  const sessionId = useRef(`session_${Date.now()}`);
   const flatListRef = useRef(null);
   const addChatMessage = useAppStore((s) => s.addChatMessage);
   const subscription = useAppStore((s) => s.subscription);
@@ -34,33 +54,47 @@ export default function SymptomChatScreen({ navigation, route }) {
     if (!text || loading) return;
 
     const userMsg = { id: Date.now().toString(), role: 'user', text };
-    setMessages((prev) => [...prev, userMsg]);
+    const updatedMessages = [...messages, userMsg];
+    setMessages(updatedMessages);
     setInput('');
     setLoading(true);
 
-    addChatMessage(sessionId.current, userMsg);
+    if (addChatMessage) addChatMessage('session', userMsg);
 
     try {
-      const res = await symptomsAPI.chat(text, [concern], sessionId.current);
-      const aiMsg = {
-        id: (Date.now() + 1).toString(),
-        role: 'assistant',
-        text: res.data.reply,
-      };
+      // Build Gemini conversation history — skip initial greeting (id '1'), only real turns
+      const geminiContents = updatedMessages
+        .filter((m) => m.id !== '1')
+        .map((m) => ({
+          role: m.role === 'user' ? 'user' : 'model',
+          parts: [{ text: m.text }],
+        }));
+
+      // Gemini requires conversation to start with user role
+      if (geminiContents.length > 0 && geminiContents[0].role !== 'user') {
+        geminiContents.shift();
+      }
+
+      // Add concern context to the first user message
+      if (geminiContents.length === 1 && concern) {
+        geminiContents[0].parts[0].text = `My health concern is: ${concern}. ${geminiContents[0].parts[0].text}`;
+      }
+
+      const reply = await callGemini(geminiContents);
+      const aiMsg = { id: (Date.now() + 1).toString(), role: 'assistant', text: reply };
       setMessages((prev) => [...prev, aiMsg]);
-    } catch {
-      // Mock response for development
+    } catch (err) {
       const aiMsg = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        text: MOCK_RESPONSES.default,
+        text: 'I\'m having trouble connecting right now. Please check your internet connection and try again.',
       };
       setMessages((prev) => [...prev, aiMsg]);
     } finally {
       setLoading(false);
       setTimeout(() => flatListRef.current?.scrollToEnd({ animated: true }), 100);
     }
-  }, [input, loading, concern]);
+  }, [input, loading, messages, concern]);
 
   const renderMessage = ({ item }) => (
     <View style={[styles.bubble, item.role === 'user' ? styles.userBubble : styles.aiBubble]}>

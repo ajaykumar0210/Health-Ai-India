@@ -3,23 +3,62 @@ import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator,
 } from 'react-native';
 import { COLORS, CONCERNS } from '../../utils/constants';
-import { symptomsAPI } from '../../utils/api';
 import useAppStore from '../../store/useAppStore';
 
-const MOCK_ANALYSIS = {
+const GEMINI_API_KEY = 'AIzaSyDGW6VRp31lGuRF3JIhpIcTQpwa-b71AM8';
+const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+
+const FALLBACK_ANALYSIS = {
   rootCause: 'Chronic Stress + Nutritional Deficiency',
   rootCauseHi: 'पुराना तनाव + पोषण की कमी',
   explanation:
-    'आपकी सभी समस्याओं का एक ही कारण है — लंबे समय से चला आ रहा तनाव और शरीर में पोषण की कमी।\n\nAll your concerns share a common root cause: chronic stress affecting your hormonal balance and depleted nutrition. This is creating a cascade — stress → poor sleep → hair loss + skin issues + fatigue.',
+    'Your concerns share a common root cause: chronic stress affecting hormonal balance and depleted nutrition. This creates a cascade effect across multiple body systems.',
   recommendations: [
-    { icon: '😴', text: 'नींद 7-8 घंटे (Fix sleep first — it resets everything)' },
-    { icon: '🥗', text: 'Iron, Zinc, Vitamin D बढ़ाएं (Add iron, zinc, vitamin D to diet)' },
-    { icon: '🧘', text: '10 मिनट रोज meditation (10 min daily meditation)' },
-    { icon: '💧', text: '3 लीटर पानी रोज (3 liters water daily)' },
+    { icon: '😴', text: 'Fix sleep first — 7-8 hours daily (नींद 7-8 घंटे)' },
+    { icon: '🥗', text: 'Add Iron, Zinc, Vitamin D to your diet (पोषण बढ़ाएं)' },
+    { icon: '🧘', text: '10 min daily meditation to reduce stress (ध्यान करें)' },
+    { icon: '💧', text: 'Drink 3 liters water daily (पानी 3 लीटर रोज)' },
   ],
   doctorRecommended: true,
-  planSuggestion: 'multicare',
 };
+
+async function fetchRootCauseFromGemini(concerns) {
+  const concernLabels = concerns.map((id) => {
+    const c = CONCERNS.find((x) => x.id === id);
+    return c ? `${c.label} (${c.labelHi})` : id;
+  }).join(', ');
+
+  const prompt = `You are an expert Indian health analyst. A patient has the following health concerns: ${concernLabels}.
+
+Analyze these concerns and identify their common root cause. Return ONLY valid JSON (no markdown, no explanation outside JSON):
+{
+  "rootCause": "Root cause in English (max 8 words)",
+  "rootCauseHi": "Root cause in Hindi (max 8 words)",
+  "explanation": "2-3 sentence explanation in English about how these concerns are connected",
+  "recommendations": [
+    {"icon": "emoji", "text": "actionable recommendation in English with Hindi in brackets"},
+    {"icon": "emoji", "text": "recommendation 2"},
+    {"icon": "emoji", "text": "recommendation 3"},
+    {"icon": "emoji", "text": "recommendation 4"}
+  ],
+  "doctorRecommended": true
+}`;
+
+  const response = await fetch(GEMINI_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      contents: [{ role: 'user', parts: [{ text: prompt }] }],
+      generationConfig: { temperature: 0.4, maxOutputTokens: 600 },
+    }),
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error?.message || 'Gemini error');
+  const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+  const jsonMatch = text.match(/\{[\s\S]*\}/);
+  if (!jsonMatch) throw new Error('No JSON in response');
+  return JSON.parse(jsonMatch[0]);
+}
 
 export default function RootCauseScreen({ navigation }) {
   const selectedConcerns = useAppStore((s) => s.selectedConcerns);
@@ -29,10 +68,10 @@ export default function RootCauseScreen({ navigation }) {
   useEffect(() => {
     const fetchAnalysis = async () => {
       try {
-        const res = await symptomsAPI.rootCause(selectedConcerns, []);
-        setAnalysis(res.data);
+        const result = await fetchRootCauseFromGemini(selectedConcerns);
+        setAnalysis(result);
       } catch {
-        setAnalysis(MOCK_ANALYSIS);
+        setAnalysis(FALLBACK_ANALYSIS);
       } finally {
         setLoading(false);
       }

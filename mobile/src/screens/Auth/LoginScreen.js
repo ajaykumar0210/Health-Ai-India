@@ -7,10 +7,11 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as Google from 'expo-auth-session/providers/google';
+import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
 import { COLORS, GRADIENTS, FONTS } from '../../utils/constants';
 import { sendOTP, getUserProfile, signInWithCredential } from '../../utils/firebase';
 import auth from '@react-native-firebase/auth';
+import { setPhoneConfirmation } from '../../utils/authState';
 import useAppStore from '../../store/useAppStore';
 
 const WEB_CLIENT_ID = '738075468552-dj2533tteuu573e28cqbdnmmf9ca76nm.apps.googleusercontent.com';
@@ -38,37 +39,11 @@ export default function LoginScreen({ navigation }) {
   const setUser = useAppStore((s) => s.setUser);
   const setToken = useAppStore((s) => s.setToken);
 
-
-  // Google Sign-In via expo-auth-session
-  const [request, response, promptAsync] = Google.useAuthRequest({ webClientId: WEB_CLIENT_ID });
-
   useEffect(() => {
-    if (response?.type === 'success') {
-      const { id_token } = response.params;
-      setLoading(true);
-      const credential = auth.GoogleAuthProvider.credential(id_token);
-      signInWithCredential(credential)
-        .then(async (result) => {
-          const fbUser = result.user;
-          const token = await fbUser.getIdToken();
-          const profile = await getUserProfile(fbUser.uid);
-          const userData = { id: fbUser.uid, email: fbUser.email, name: profile?.name || fbUser.displayName, photo: fbUser.photoURL, ...profile };
-          await AsyncStorage.setItem('auth_token', token);
-          await AsyncStorage.setItem('user_data', JSON.stringify(userData));
-          setToken(token);
-          setUser(userData);
-          if (profile?.name) {
-            navigation.replace('MainTabs');
-          } else {
-            navigation.navigate('ProfileSetup', { uid: fbUser.uid, email: fbUser.email });
-          }
-        })
-        .catch((err) => Alert.alert('Google Sign-In Error', err.message || 'Failed to sign in with Google.'))
-        .finally(() => setLoading(false));
-    } else if (response?.type === 'error') {
-      Alert.alert('Google Sign-In Error', response.error?.message || 'Sign-in was cancelled or failed.');
-    }
-  }, [response]);
+    GoogleSignin.configure({
+      webClientId: WEB_CLIENT_ID,
+    });
+  }, []);
 
   const handleSendOTP = async () => {
     const cleaned = phone.replace(/\D/g, '');
@@ -79,8 +54,9 @@ export default function LoginScreen({ navigation }) {
     setLoading(true);
     try {
       const confirmationResult = await sendOTP('+91' + cleaned);
+      setPhoneConfirmation(confirmationResult);
       setLoading(false);
-      navigation.navigate('OTPVerify', { phone: '+91' + cleaned, confirmationResult });
+      navigation.navigate('OTPVerify', { phone: '+91' + cleaned });
     } catch (err) {
       setLoading(false);
       Alert.alert('Error', err.message || 'Failed to send OTP. Please try again.');
@@ -93,16 +69,57 @@ export default function LoginScreen({ navigation }) {
     if (password.length < 8) { Alert.alert('Weak Password', 'Password must be at least 8 characters.'); return; }
     setLoading(true);
     try {
-      let userCredential;
-      if (mode === 'login') {
-        userCredential = await auth().signInWithEmailAndPassword(email.trim(), password);
+      if (mode === 'signup') {
+        // Create account → send verification email → go to verify screen
+        const userCredential = await auth().createUserWithEmailAndPassword(email.trim(), password);
+        await userCredential.user.sendEmailVerification();
+        navigation.navigate('EmailVerify', { email: email.trim() });
       } else {
-        userCredential = await auth().createUserWithEmailAndPassword(email.trim(), password);
+        // Login → check email verified first
+        const userCredential = await auth().signInWithEmailAndPassword(email.trim(), password);
+        const fbUser = userCredential.user;
+        if (!fbUser.emailVerified) {
+          navigation.navigate('EmailVerify', { email: email.trim() });
+          return;
+        }
+        const token = await fbUser.getIdToken();
+        const profile = await getUserProfile(fbUser.uid);
+        const userData = { id: fbUser.uid, email: fbUser.email, name: profile?.name || fbUser.displayName, ...profile };
+        await AsyncStorage.setItem('auth_token', token);
+        await AsyncStorage.setItem('user_data', JSON.stringify(userData));
+        setToken(token);
+        setUser(userData);
+        if (profile?.name) {
+          navigation.replace('MainTabs');
+        } else {
+          navigation.navigate('ProfileSetup', { uid: fbUser.uid, email: fbUser.email });
+        }
       }
-      const fbUser = userCredential.user;
+    } catch (err) {
+      const msg = err.code === 'auth/user-not-found' ? 'No account found with this email.'
+        : err.code === 'auth/wrong-password' ? 'Incorrect password.'
+        : err.code === 'auth/invalid-credential' ? 'Incorrect email or password.'
+        : err.code === 'auth/email-already-in-use' ? 'An account with this email already exists.'
+        : err.message || 'Something went wrong.';
+      Alert.alert('Auth Error', msg);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    try {
+      await GoogleSignin.hasPlayServices();
+      const userInfo = await GoogleSignin.signIn();
+      const idToken = userInfo.data?.idToken ?? userInfo.idToken;
+      if (!idToken) throw new Error('No ID token received from Google.');
+      setLoading(true);
+      const credential = auth.GoogleAuthProvider.credential(idToken);
+      const result = await signInWithCredential(credential);
+      const fbUser = result.user;
       const token = await fbUser.getIdToken();
       const profile = await getUserProfile(fbUser.uid);
-      const userData = { id: fbUser.uid, email: fbUser.email, name: profile?.name || name.trim() || fbUser.displayName, ...profile };
+      const userData = { id: fbUser.uid, email: fbUser.email, name: profile?.name || fbUser.displayName, photo: fbUser.photoURL, ...profile };
       await AsyncStorage.setItem('auth_token', token);
       await AsyncStorage.setItem('user_data', JSON.stringify(userData));
       setToken(token);
@@ -113,18 +130,12 @@ export default function LoginScreen({ navigation }) {
         navigation.navigate('ProfileSetup', { uid: fbUser.uid, email: fbUser.email });
       }
     } catch (err) {
-      const msg = err.code === 'auth/user-not-found' ? 'No account found with this email.'
-        : err.code === 'auth/wrong-password' ? 'Incorrect password.'
-        : err.code === 'auth/email-already-in-use' ? 'An account with this email already exists.'
-        : err.message || 'Something went wrong.';
-      Alert.alert('Auth Error', msg);
+      if (err.code === statusCodes.SIGN_IN_CANCELLED) return;
+      if (err.code === statusCodes.IN_PROGRESS) return;
+      Alert.alert('Google Sign-In Error', err.message || 'Failed to sign in with Google.');
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleGoogleSignIn = () => {
-    promptAsync();
   };
 
   return (

@@ -19,12 +19,12 @@ const GENDERS = [
 ];
 const BLOOD_GROUPS = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
 const LANGUAGES = [
-  { val: 'hi', label: 'à¤¹à¤¿à¤‚à¤¦à¥€', sub: 'Hindi' },
   { val: 'en', label: 'English', sub: 'English' },
+  { val: 'hi', label: 'हिंदी', sub: 'Hindi' },
   { val: 'hinglish', label: 'Hinglish', sub: 'Hindi + English' },
 ];
 
-export default function ProfileSetupScreen({ navigation }) {
+export default function ProfileSetupScreen({ navigation, route }) {
   const [step, setStep] = useState(0);
   const [name, setName] = useState('');
   const [age, setAge] = useState('');
@@ -32,7 +32,7 @@ export default function ProfileSetupScreen({ navigation }) {
   const [bloodGroup, setBloodGroup] = useState('');
   const [height, setHeight] = useState('');
   const [weight, setWeight] = useState('');
-  const [language, setLanguage] = useState('hi');
+  const [language, setLanguage] = useState('en');
   const [loading, setLoading] = useState(false);
   const progress = useRef(new Animated.Value(0)).current;
   const setUser = useAppStore((s) => s.setUser);
@@ -67,7 +67,7 @@ export default function ProfileSetupScreen({ navigation }) {
     setLoading(true);
     const userData = { name: name.trim(), age: parseInt(age), gender, bloodGroup, height, weight, language };
     try {
-      const uid = auth.currentUser?.uid || route.params?.uid;
+      const uid = auth().currentUser?.uid || route.params?.uid;
       if (uid) {
         await saveUserProfile(uid, userData);
       }
@@ -75,13 +75,13 @@ export default function ProfileSetupScreen({ navigation }) {
       await AsyncStorage.setItem('user_data', JSON.stringify(user));
       setUser(user);
       setLanguagePref(language);
-      navigation.replace('ProblemSelect');
+      navigation.replace('MainTabs');
     } catch (err) {
       const user = { id: route.params?.uid, ...userData };
       await AsyncStorage.setItem('user_data', JSON.stringify(user));
       setUser(user);
       setLanguagePref(language);
-      navigation.replace('ProblemSelect');
+      navigation.replace('MainTabs');
     } finally {
       setLoading(false);
     }

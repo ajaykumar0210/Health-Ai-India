@@ -9,14 +9,15 @@ import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { COLORS, FONTS } from '../../utils/constants';
 import { sendOTP, getUserProfile } from '../../utils/firebase';
+import { getPhoneConfirmation, setPhoneConfirmation, clearPhoneConfirmation } from '../../utils/authState';
 import useAppStore from '../../store/useAppStore';
 
 export default function OTPVerifyScreen({ navigation, route }) {
-  const { phone, confirmationResult } = route.params;
+  const { phone } = route.params;
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [loading, setLoading] = useState(false);
   const [timer, setTimer] = useState(30);
-  const [confirmation, setConfirmation] = useState(confirmationResult);
+  const [confirmation, setConfirmation] = useState(() => getPhoneConfirmation());
   const inputs = useRef([]);
   const setToken = useAppStore((s) => s.setToken);
   const setUser = useAppStore((s) => s.setUser);
@@ -101,6 +102,7 @@ export default function OTPVerifyScreen({ navigation, route }) {
     inputs.current[0]?.focus();
     try {
       const newConfirmation = await sendOTP(phone);
+      setPhoneConfirmation(newConfirmation);
       setConfirmation(newConfirmation);
       Alert.alert('OTP Sent', 'A new OTP has been sent to your phone.');
     } catch (err) {
@@ -146,6 +148,7 @@ export default function OTPVerifyScreen({ navigation, route }) {
                 styles.otpBox,
                 val ? styles.otpBoxFilled : null,
                 i === otp.findIndex((v) => !v) && styles.otpBoxActive,
+                val ? { color: '#FFFFFF' } : null,
               ]}
               value={val}
               onChangeText={(v) => handleChange(v.replace(/[^0-9]/g, ''), i)}
@@ -236,7 +239,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
   },
   otpBoxFilled: {
-    borderColor: '#D4A017', backgroundColor: '#1A1A0A',
+    borderColor: '#D4A017', backgroundColor: '#1A1A0A', color: '#FFFFFF',
     shadowColor: '#D4A017', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 8, elevation: 4,
   },
   otpBoxActive: { borderColor: '#9CA3AF' },
