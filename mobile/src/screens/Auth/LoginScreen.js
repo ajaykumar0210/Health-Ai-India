@@ -9,9 +9,8 @@ import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Google from 'expo-auth-session/providers/google';
 import { COLORS, GRADIENTS, FONTS } from '../../utils/constants';
-import { sendOTP, getUserProfile, GoogleAuthProvider, signInWithCredential } from '../../utils/firebase';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../../utils/firebase';
+import { sendOTP, getUserProfile, signInWithCredential } from '../../utils/firebase';
+import auth from '@react-native-firebase/auth';
 import useAppStore from '../../store/useAppStore';
 
 const WEB_CLIENT_ID = '738075468552-dj2533tteuu573e28cqbdnmmf9ca76nm.apps.googleusercontent.com';
@@ -47,8 +46,8 @@ export default function LoginScreen({ navigation }) {
     if (response?.type === 'success') {
       const { id_token } = response.params;
       setLoading(true);
-      const credential = GoogleAuthProvider.credential(id_token);
-      signInWithCredential(auth, credential)
+      const credential = auth.GoogleAuthProvider.credential(id_token);
+      signInWithCredential(credential)
         .then(async (result) => {
           const fbUser = result.user;
           const token = await fbUser.getIdToken();
@@ -96,9 +95,9 @@ export default function LoginScreen({ navigation }) {
     try {
       let userCredential;
       if (mode === 'login') {
-        userCredential = await signInWithEmailAndPassword(auth, email.trim(), password);
+        userCredential = await auth().signInWithEmailAndPassword(email.trim(), password);
       } else {
-        userCredential = await createUserWithEmailAndPassword(auth, email.trim(), password);
+        userCredential = await auth().createUserWithEmailAndPassword(email.trim(), password);
       }
       const fbUser = userCredential.user;
       const token = await fbUser.getIdToken();

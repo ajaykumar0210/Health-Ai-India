@@ -1,0 +1,46 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Users — only the owner can read/write their own profile
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Doctors — anyone authenticated can read, only admin (backend) can write
+    match /doctors/{doctorId} {
+      allow read: if request.auth != null;
+      allow write: if false; // Only backend (Firebase Admin SDK) can write
+    }
+
+    // Consultations — user can only see their own consultations
+    match /consultations/{consultationId} {
+      allow read: if request.auth != null &&
+        resource.data.userId == request.auth.uid;
+      allow create: if request.auth != null &&
+        request.resource.data.userId == request.auth.uid;
+      allow update: if false; // Only backend can update
+      allow delete: if false;
+    }
+
+    // Subscriptions — user can only read their own subscription
+    match /subscriptions/{userId} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+      allow write: if false; // Only backend can write
+    }
+
+    // Progress logs — user can only see their own logs
+    match /progress_logs/{logId} {
+      allow read: if request.auth != null &&
+        resource.data.userId == request.auth.uid;
+      allow create: if request.auth != null &&
+        request.resource.data.userId == request.auth.uid;
+      allow update, delete: if false;
+    }
+
+    // Block everything else
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
