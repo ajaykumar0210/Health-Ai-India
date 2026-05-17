@@ -5,6 +5,7 @@ import {
 import { COLORS } from '../../utils/constants';
 import { doctorsAPI } from '../../utils/api';
 import useAppStore from '../../store/useAppStore';
+import useTranslation from '../../utils/useTranslation';
 
 const MOCK_DOCTORS = [
   {
@@ -37,6 +38,7 @@ export default function DoctorListScreen({ navigation }) {
   const [doctors, setDoctors] = useState([]);
   const [loading, setLoading] = useState(true);
   const selectedConcerns = useAppStore((s) => s.selectedConcerns);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const fetch = async () => {
@@ -64,11 +66,11 @@ export default function DoctorListScreen({ navigation }) {
         <View style={{ flex: 1, marginLeft: 12 }}>
           <Text style={styles.name}>{item.name}</Text>
           <Text style={styles.spec}>{item.specialization}</Text>
-          <Text style={styles.exp}>{item.experience} years experience</Text>
+          <Text style={styles.exp}>{item.experience} {t('years_experience')}</Text>
         </View>
         <View style={[styles.badge, { backgroundColor: item.available ? '#E6F4EA' : '#FEE8E8' }]}>
           <Text style={[styles.badgeText, { color: item.available ? COLORS.success : COLORS.error }]}>
-            {item.available ? 'Available' : 'Busy'}
+            {item.available ? t('available') : t('busy')}
           </Text>
         </View>
       </View>
@@ -76,11 +78,11 @@ export default function DoctorListScreen({ navigation }) {
       <View style={styles.statsRow}>
         <View style={styles.stat}>
           <Text style={styles.statValue}>⭐ {item.rating}</Text>
-          <Text style={styles.statLabel}>Rating</Text>
+          <Text style={styles.statLabel}>{t('rating')}</Text>
         </View>
         <View style={styles.stat}>
           <Text style={styles.statValue}>{item.totalConsultations.toLocaleString()}</Text>
-          <Text style={styles.statLabel}>Consultations</Text>
+          <Text style={styles.statLabel}>{t('consultations')}</Text>
         </View>
         <View style={styles.stat}>
           <Text style={styles.statValue}>₹{item.price}</Text>
@@ -104,7 +106,7 @@ export default function DoctorListScreen({ navigation }) {
         disabled={!item.available}
       >
         <Text style={styles.bookBtnText}>
-          {item.available ? 'Book Consultation →' : 'Not Available Now'}
+          {item.available ? t('book_now') : t('busy')}
         </Text>
       </TouchableOpacity>
     </TouchableOpacity>
@@ -125,7 +127,7 @@ export default function DoctorListScreen({ navigation }) {
           <Text style={styles.back}>←</Text>
         </TouchableOpacity>
         <View>
-          <Text style={styles.heading}>Verified Doctors</Text>
+          <Text style={styles.heading}>{t('find_doctor')}</Text>
           <Text style={styles.sub}>All MCI-licensed • Private consultation</Text>
         </View>
       </View>

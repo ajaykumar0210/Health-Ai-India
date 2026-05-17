@@ -6,22 +6,9 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import useAppStore from '../../store/useAppStore';
 import { COLORS, GRADIENTS, FONTS } from '../../utils/constants';
+import useTranslation from '../../utils/useTranslation';
 
 const { width } = Dimensions.get('window');
-
-const QUICK_ACTIONS = [
-  { id: 'ai', icon: '\u{1F916}', label: 'AI Diagnosis', sub: 'Instant answers', screen: 'SymptomChat', gradient: ['#F3F4F6', '#FFFFFF'] },
-  { id: 'doc', icon: '\u{1F468}\u{200D}\u{2695}\u{FE0F}', label: 'Book Doctor', sub: 'Video consult', screen: 'DoctorList', gradient: ['#F3F4F6', '#FFFFFF'] },
-  { id: 'rx', icon: '\u{1F48A}', label: 'Prescriptions', sub: 'Download PDFs', screen: 'HealthVault', gradient: ['#F3F4F6', '#FFFFFF'] },
-  { id: 'checkin', icon: '\u{1F4CA}', label: 'Weekly Check-in', sub: 'Track progress', screen: 'WeeklyCheckIn', gradient: ['#F3F4F6', '#FFFFFF'] },
-];
-
-const HEALTH_CONCERNS = [
-  { id: 'hair', label: 'Hair Fall', icon: '\u{1F487}', gradient: ['#F3F4F6', '#FFFFFF'], tag: 'Most searched' },
-  { id: 'skin', label: 'Skin & Acne', icon: '\u{2728}', gradient: ['#F3F4F6', '#FFFFFF'], tag: '' },
-  { id: 'stress', label: 'Stress & Sleep', icon: '\u{1F9E0}', gradient: ['#F3F4F6', '#FFFFFF'], tag: '' },
-  { id: 'sexual', label: 'Sexual Health', icon: '\u{2764}\u{FE0F}', gradient: ['#F3F4F6', '#FFFFFF'], tag: 'Private' },
-];
 
 export default function HomeScreen({ navigation }) {
   const user = useAppStore((s) => s.user);
@@ -29,9 +16,25 @@ export default function HomeScreen({ navigation }) {
   const subscription = useAppStore((s) => s.subscription);
   const streaks = useAppStore((s) => s.streaks);
 
+  const { t } = useTranslation();
+
+  const QUICK_ACTIONS = [
+    { id: 'ai', icon: '\u{1F916}', labelKey: 'ai_diagnosis', subKey: 'instant_answers', screen: 'SymptomChat' },
+    { id: 'doc', icon: '\u{1F468}\u200D\u2695\uFE0F', labelKey: 'book_doctor', subKey: 'video_consult', screen: 'DoctorList' },
+    { id: 'rx', icon: '\u{1F48A}', labelKey: 'prescriptions', subKey: 'download_pdfs', screen: 'HealthVault' },
+    { id: 'checkin', icon: '\u{1F4CA}', labelKey: 'weekly_checkin', subKey: 'track_progress', screen: 'WeeklyCheckIn' },
+  ];
+
+  const HEALTH_CONCERNS = [
+    { id: 'hair', labelKey: 'hair_fall', icon: '\u{1F487}', tagKey: 'most_searched' },
+    { id: 'skin', labelKey: 'skin_acne', icon: '\u2728', tagKey: '' },
+    { id: 'stress', labelKey: 'stress_sleep', icon: '\u{1F9E0}', tagKey: '' },
+    { id: 'sexual', labelKey: 'sexual_health', icon: '\u2764\uFE0F', tagKey: 'private_label' },
+  ];
+
   const firstName = user?.name?.split(' ')[0] || 'Friend';
   const hour = new Date().getHours();
-  const greeting = hour < 12 ? 'Good Morning' : hour < 17 ? 'Good Afternoon' : 'Good Evening';
+  const greeting = hour < 12 ? t('good_morning') : hour < 17 ? t('good_afternoon') : t('good_evening');
   const healthScore = 72; // mock
 
   return (
@@ -64,16 +67,16 @@ export default function HomeScreen({ navigation }) {
         {/* Health Score Card */}
         <View style={styles.scoreCard}>
           <View style={styles.scoreLeft}>
-            <Text style={styles.scoreLabel}>Health Score</Text>
+            <Text style={styles.scoreLabel}>{t('health_score')}</Text>
             <Text style={styles.scoreVal}>{healthScore}<Text style={styles.scoreOf}>/100</Text></Text>
-            <Text style={styles.scoreSub}>{'\u{1F525}'} {streaks} day streak {'\u{2022}'} Keep going!</Text>
+            <Text style={styles.scoreSub}>{'\u{1F525}'} {streaks} {t('day_streak')} {'\u{2022}'} {t('keep_going')}</Text>
           </View>
           <View style={styles.scoreRight}>
             <View style={styles.scoreRing}>
               <Text style={styles.scoreRingVal}>{healthScore}%</Text>
             </View>
             <TouchableOpacity style={styles.scoreCta} onPress={() => navigation.navigate('Dashboard')}>
-              <Text style={styles.scoreCtaText}>View Details {'\u{2192}'}</Text>
+              <Text style={styles.scoreCtaText}>{t('view_details')} {'\u{2192}'}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -84,8 +87,8 @@ export default function HomeScreen({ navigation }) {
         <TouchableOpacity style={styles.planBanner} onPress={() => navigation.navigate('Plans')} activeOpacity={0.85}>
           <LinearGradient colors={['#D4A017', '#B8860B']} style={styles.planBannerGrad} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}>
             <View>
-              <Text style={styles.planBannerTitle}>Upgrade to Premium</Text>
-              <Text style={styles.planBannerSub}>Unlimited AI {'\u{2022}'} Doctor calls {'\u{2022}'} Prescriptions</Text>
+              <Text style={styles.planBannerTitle}>{t('upgrade_premium')}</Text>
+              <Text style={styles.planBannerSub}>{t('unlimited_ai')} {'\u{2022}'} {t('doctor_calls')} {'\u{2022}'} {t('prescriptions_label')}</Text>
             </View>
             <View style={styles.planBannerPill}>
               <Text style={styles.planBannerPrice}>{'\u{20B9}'}149/mo</Text>
@@ -96,7 +99,7 @@ export default function HomeScreen({ navigation }) {
 
       {/* â”€â”€ Quick Actions â”€â”€ */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Quick Actions</Text>
+        <Text style={styles.sectionTitle}>{t('quick_actions')}</Text>
         <View style={styles.quickGrid}>
           {QUICK_ACTIONS.map((a) => (
             <TouchableOpacity
@@ -105,10 +108,10 @@ export default function HomeScreen({ navigation }) {
               onPress={() => navigation.navigate(a.screen)}
               activeOpacity={0.85}
             >
-              <LinearGradient colors={a.gradient} style={styles.quickCardGrad}>
+              <LinearGradient colors={['#F3F4F6', '#FFFFFF']} style={styles.quickCardGrad}>
                 <Text style={styles.quickIcon}>{a.icon}</Text>
-                <Text style={styles.quickLabel}>{a.label}</Text>
-                <Text style={styles.quickSub}>{a.sub}</Text>
+                <Text style={styles.quickLabel}>{t(a.labelKey)}</Text>
+                <Text style={styles.quickSub}>{t(a.subKey)}</Text>
                 <Ionicons name="arrow-forward-outline" size={14} color="rgba(255,255,255,0.7)" style={{ marginTop: 8 }} />
               </LinearGradient>
             </TouchableOpacity>
@@ -119,7 +122,7 @@ export default function HomeScreen({ navigation }) {
       {/* â”€â”€ Treat Your Concern â”€â”€ */}
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Treat Your Concern</Text>
+          <Text style={styles.sectionTitle}>{t('your_health_focus')}</Text>
           <TouchableOpacity onPress={() => navigation.navigate('ProblemSelect')}>
             <Text style={styles.seeAll}>See All</Text>
           </TouchableOpacity>
@@ -132,14 +135,14 @@ export default function HomeScreen({ navigation }) {
               onPress={() => navigation.navigate('SymptomChat', { concern: c.id })}
               activeOpacity={0.85}
             >
-              <LinearGradient colors={c.gradient} style={styles.concernCardGrad}>
-                {!!c.tag && (
+              <LinearGradient colors={['#F3F4F6', '#FFFFFF']} style={styles.concernCardGrad}>
+                {!!c.tagKey && (
                   <View style={styles.concernTag}>
-                    <Text style={styles.concernTagText}>{c.tag}</Text>
+                    <Text style={styles.concernTagText}>{t(c.tagKey)}</Text>
                   </View>
                 )}
                 <Text style={styles.concernIcon}>{c.icon}</Text>
-                <Text style={styles.concernLabel}>{c.label}</Text>
+                <Text style={styles.concernLabel}>{t(c.labelKey)}</Text>
                 <Text style={styles.concernCta}>Get Treatment {'\u{2192}'}</Text>
               </LinearGradient>
             </TouchableOpacity>

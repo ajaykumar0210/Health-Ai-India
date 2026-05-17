@@ -4,6 +4,7 @@ import {
 } from 'react-native';
 import { COLORS } from '../../utils/constants';
 import useAppStore from '../../store/useAppStore';
+import useTranslation from '../../utils/useTranslation';
 
 export default function ProfileScreen({ navigation }) {
   const user = useAppStore((s) => s.user);
@@ -12,6 +13,7 @@ export default function ProfileScreen({ navigation }) {
   const language = useAppStore((s) => s.language);
   const setLanguage = useAppStore((s) => s.setLanguage);
   const isHindi = language === 'hi';
+  const { t: tr } = useTranslation();
 
   const LANGUAGES = [
     { code: 'en', label: 'EN', full: 'English' },
@@ -69,15 +71,15 @@ export default function ProfileScreen({ navigation }) {
       <View style={styles.statsRow}>
         <View style={styles.stat}>
           <Text style={styles.statVal}>30</Text>
-          <Text style={styles.statLbl}>Days</Text>
+          <Text style={styles.statLbl}>{tr('days')}</Text>
         </View>
         <View style={styles.stat}>
           <Text style={styles.statVal}>12🔥</Text>
-          <Text style={styles.statLbl}>Streak</Text>
+          <Text style={styles.statLbl}>{tr('streak')}</Text>
         </View>
         <View style={styles.stat}>
           <Text style={styles.statVal}>3</Text>
-          <Text style={styles.statLbl}>Consults</Text>
+          <Text style={styles.statLbl}>{tr('consults')}</Text>
         </View>
       </View>
 
@@ -99,7 +101,7 @@ export default function ProfileScreen({ navigation }) {
         </View>
       </View>
 
-      {/* Menu */}}
+      {/* Menu */}
       <View style={styles.menuCard}>
         {MENU.map((item, i) => (
           <TouchableOpacity
@@ -118,7 +120,7 @@ export default function ProfileScreen({ navigation }) {
       <View style={styles.dangerCard}>
         <TouchableOpacity style={styles.dangerItem} onPress={() => navigation.navigate('DeleteAccount')}>
           <Text style={styles.dangerIcon}>🗑️</Text>
-          <Text style={styles.dangerText}>Delete Account & All Data</Text>
+          <Text style={styles.dangerText}>{tr('delete_account')}</Text>
         </TouchableOpacity>
       </View>
 
@@ -126,7 +128,7 @@ export default function ProfileScreen({ navigation }) {
         <Text style={styles.logoutText}>🚪 {t('Logout', 'लॉगआउट')}</Text>
       </TouchableOpacity>
 
-      <Text style={styles.version}>Health AI India v1.0.0 — Made with ❤️ for India</Text>
+      <Text style={styles.version}>{tr('version')}</Text>
       <View style={{ height: 80 }} />
     </ScrollView>
   );
