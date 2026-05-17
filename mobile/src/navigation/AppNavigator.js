@@ -1,6 +1,6 @@
 ﻿import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { View, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -52,7 +52,7 @@ import DeleteAccountScreen from '../screens/Profile/DeleteAccountScreen';
 import SubscriptionManageScreen from '../screens/Profile/SubscriptionManageScreen';
 import LabReportsScreen from '../screens/Profile/LabReportsScreen';
 
-const Stack = createStackNavigator();
+const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 const TAB_CONFIG = {
